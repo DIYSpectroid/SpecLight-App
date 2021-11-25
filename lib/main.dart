@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'choose_image.dart';
+import 'package:camera/camera.dart';
+
 
 void main() {
   runApp(const MyApp());
 }
 
+Future<void> temporaryPatch() async{
+  // Ensure that plugin services are initialized so that `availableCameras()`
+  // can be called before `runApp()`
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Obtain a list of the available cameras on the device.
+  final cameras = await availableCameras();
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
 
   // This widget is the root of your application.
   @override
