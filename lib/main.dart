@@ -65,7 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton.icon(
               icon: const Icon(Icons.camera_alt),
               label: const Text("Take a photo for analysis"),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push((context),
+                    MaterialPageRoute(builder:
+                        (context) => const ChoosePhotoPage(isCameraChosen: true),));
+              },
             ),
             TextButton.icon(
               icon: const Icon(Icons.add_a_photo),
@@ -73,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: (){
                 Navigator.push((context),
                     MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(),));
+                        (context) => const ChoosePhotoPage(isCameraChosen: false),));
                 },
             )
           ]

@@ -1,6 +1,3 @@
-
-
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,9 +8,9 @@ final ImagePicker picker = ImagePicker();
 
 class ChoosePhotoPage extends StatefulWidget{
 
-  const ChoosePhotoPage({Key? key}) : super(key: key);
+  const ChoosePhotoPage({Key? key, required this.isCameraChosen}) : super(key: key);
 
-
+  final bool isCameraChosen;
 
 
 
@@ -25,15 +22,17 @@ class ChoosePhotoPage extends StatefulWidget{
 
 class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
 
-  var image;
-
   Future<XFile?> choosePhoto() async {
-    return await picker.pickImage(source: ImageSource.gallery);
+    if(!widget.isCameraChosen) {
+      return await picker.pickImage(source: ImageSource.gallery);
+    }
+    else {
+      return await picker.pickImage(source: ImageSource.camera);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
 
