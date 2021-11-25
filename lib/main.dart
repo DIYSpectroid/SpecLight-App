@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'choose_image.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,7 +70,11 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton.icon(
               icon: const Icon(Icons.add_a_photo),
               label: const Text("Send a photo for analysis"),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push((context),
+                    MaterialPageRoute(builder:
+                        (context) => const ChoosePhotoPage(),));
+                },
             )
           ]
         )
