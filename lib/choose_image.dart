@@ -28,7 +28,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
   var image;
 
   Future<XFile?> choosePhoto() async {
-    XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    return await picker.pickImage(source: ImageSource.gallery);
   }
 
   @override
