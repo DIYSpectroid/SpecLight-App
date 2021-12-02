@@ -43,10 +43,41 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
             future: choosePhoto(),
             builder: (BuildContext context, AsyncSnapshot<XFile?> snapshot){
               if(snapshot.hasData){
-                return  Container(
-                  color: Colors.grey[500],
-                  child: Center(child: Image.file(File(snapshot.data!.path))),
-
+                return  Column(
+                  children:
+                  [
+                    Expanded(
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Image.file(File(snapshot.data!.path)),
+                      ),
+                  ),
+                  Row(
+                      children:
+                      [
+                        Expanded
+                        (
+                          child: TextButton.icon(
+                            onPressed: () {
+                              // Respond to button press
+                            },
+                            icon: const Icon(Icons.update, size: 18),
+                            label: const Text("Retry"),
+                          ),
+                        ),
+                        Expanded
+                        (
+                          child: TextButton.icon(
+                            onPressed: () {
+                              // Respond to button press
+                            },
+                            icon: const Icon(Icons.verified_outlined, size: 18),
+                            label: const Text("Continue"),
+                          )
+                        )
+                      ]
+                  ),
+                  ]
                 );
               } else {
                 return const Text("Loading photo...");
@@ -55,10 +86,10 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
           )
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
+      /*bottomNavigationBar: BottomNavigationBar(
         items: const [BottomNavigationBarItem(icon: Icon(Icons.update), backgroundColor: Colors.lime, label: "Change image"),
           BottomNavigationBarItem(icon: Icon(Icons.verified_outlined), backgroundColor: Colors.pinkAccent, label: "Analyse image")],
-      ),
+      ),*/
     );
   }
 }
