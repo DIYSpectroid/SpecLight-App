@@ -46,12 +46,18 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                 return  Container(
                   color: Colors.grey[500],
                   child: Center(child: Image.file(File(snapshot.data!.path))),
+
                 );
               } else {
                 return const Text("Loading photo...");
               }
             },
           )
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [BottomNavigationBarItem(icon: Icon(Icons.update), backgroundColor: Colors.lime, label: "Change image"),
+          BottomNavigationBarItem(icon: Icon(Icons.verified_outlined), backgroundColor: Colors.pinkAccent, label: "Analyse image")],
       ),
     );
   }
