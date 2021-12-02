@@ -6,24 +6,24 @@ import 'package:image_picker/image_picker.dart';
 
 final ImagePicker picker = ImagePicker();
 
-class ChoosePhotoPage extends StatefulWidget{
+class CropPhotoPage extends StatefulWidget{
 
-  const ChoosePhotoPage({Key? key}) : super(key: key);
+  const CropPhotoPage({Key? key}) : super(key: key);
 
   @override
-  State<ChoosePhotoPage> createState() => _ChoosePhotoPageState();
+  State<CropPhotoPage> createState() => _CropPhotoPageState();
 
 }
 
 
-class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
+class _CropPhotoPageState extends State<CropPhotoPage> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
 
-        title: const Text("Choose photo to analyze"),
+        title: const Text("Crop photo to analyze"),
       ),
       body: Center(
           child: Text('test'),

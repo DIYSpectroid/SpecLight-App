@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:spectroid/crop_image.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -59,7 +60,9 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                         (
                           child: TextButton.icon(
                             onPressed: () {
-                              // Respond to button press
+                              Navigator.push((context),
+                                  MaterialPageRoute(builder:
+                                      (context) => const ChoosePhotoPage(isCameraChosen: false),));
                             },
                             icon: const Icon(Icons.update, size: 18),
                             label: const Text("Retry"),
@@ -69,7 +72,9 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                         (
                           child: TextButton.icon(
                             onPressed: () {
-                              // Respond to button press
+                              Navigator.push((context),
+                                MaterialPageRoute(builder:
+                                  (context) => const CropPhotoPage(),));
                             },
                             icon: const Icon(Icons.verified_outlined, size: 18),
                             label: const Text("Continue"),
