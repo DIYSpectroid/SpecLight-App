@@ -62,7 +62,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                             onPressed: () {
                               Navigator.push((context),
                                   MaterialPageRoute(builder:
-                                      (context) => const ChoosePhotoPage(isCameraChosen: false),));
+                                      (context) => ChoosePhotoPage(isCameraChosen: widget.isCameraChosen),));
                             },
                             icon: const Icon(Icons.update, size: 18),
                             label: const Text("Retry"),
