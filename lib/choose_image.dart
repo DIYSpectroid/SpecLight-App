@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spectroid/crop_image.dart';
+
+import 'camera_page.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -28,7 +31,12 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
       return await picker.pickImage(source: ImageSource.gallery);
     }
     else {
-      return await picker.pickImage(source: ImageSource.camera);
+      WidgetsFlutterBinding.ensureInitialized();
+      final cameras = await availableCameras();
+      final CameraDescription firstCamera = cameras.first;
+      return await Navigator.push((context),
+          MaterialPageRoute(builder:
+              (context) => CameraPage(camera: firstCamera),));
     }
   }
 
@@ -62,7 +70,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                             onPressed: () {
                               Navigator.push((context),
                                   MaterialPageRoute(builder:
-                                      (context) => const ChoosePhotoPage(isCameraChosen: false),));
+                                      (context) => ChoosePhotoPage(isCameraChosen: widget.isCameraChosen),));
                             },
                             icon: const Icon(Icons.update, size: 18),
                             label: const Text("Retry"),
