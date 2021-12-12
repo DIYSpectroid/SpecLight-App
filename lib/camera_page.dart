@@ -29,7 +29,8 @@ class _CameraPage extends State<CameraPage> {
       // Get a specific camera from the list of available cameras.
       widget.camera,
       // Define the resolution to use.
-      ResolutionPreset.medium,
+      ResolutionPreset.high,
+      enableAudio: false,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -45,12 +46,16 @@ class _CameraPage extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
 
         title: const Text("Camera"),
       ),
       body: Center(
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
           child: FutureBuilder<void>(
             future: _initializeControllerFuture,
             builder: (context, snapshot) {
@@ -64,6 +69,7 @@ class _CameraPage extends State<CameraPage> {
             },
           )
       ),
+    ),
       floatingActionButton: FloatingActionButton(
         // Provide an onPressed callback.
         onPressed: () async {
@@ -72,7 +78,7 @@ class _CameraPage extends State<CameraPage> {
           try {
             // Ensure that the camera is initialized.
             await _initializeControllerFuture;
-
+            _controller.setFlashMode(FlashMode.off);
             // Attempt to take a picture and then get the location
             // where the image file is saved.
             final image = await _controller.takePicture();
