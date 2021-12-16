@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 
+
+
 class CameraPage extends StatefulWidget{
 
   const CameraPage({Key? key, required this.camera}) : super(key: key);
@@ -17,11 +19,16 @@ class CameraPage extends StatefulWidget{
 
 class _CameraPage extends State<CameraPage> {
 
+  double _minAvailableExposureOffset = -0.5;
+  double _maxAvailableExposureOffset = 0.5;
+  double _currentExposureOffset = 0.0;
+
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
   @override
   void initState() {
+
     super.initState();
     // To display the current output from the Camera,
     // create a CameraController.
@@ -35,6 +42,8 @@ class _CameraPage extends State<CameraPage> {
 
     // Next, initialize the controller. This returns a Future.
     _initializeControllerFuture = _controller.initialize();
+
+
   }
 
   @override
@@ -46,14 +55,15 @@ class _CameraPage extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
 
         title: const Text("Camera"),
       ),
       body: Center(
-        child: SizedBox(
+        child: Stack(children: <Widget>
+        [
+          SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: FutureBuilder<void>(
@@ -65,11 +75,54 @@ class _CameraPage extends State<CameraPage> {
               } else {
                 // Otherwise, display a loading indicator.
                 return const Center(child: CircularProgressIndicator());
-              }
-            },
+                  }
+                },
+              )
+            ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                _currentExposureOffset.toStringAsFixed(1) + 'x',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ),
+          Expanded(
+            child: RotatedBox(
+              quarterTurns: 3,
+              child: Container(
+                height: 30,
+                child: Slider(
+                  value: _currentExposureOffset,
+                  min: _minAvailableExposureOffset,
+                  max: _maxAvailableExposureOffset,
+                  activeColor: Colors.white,
+                  inactiveColor: Colors.white30,
+                  onChanged: (value) async {
+                    _controller
+                        .getMinExposureOffset()
+                        .then((value) => _minAvailableExposureOffset = value);
+                    _controller
+                        .getMaxExposureOffset()
+                        .then((value) => _maxAvailableExposureOffset = value);
+                    setState(() {
+                      _currentExposureOffset = value;
+                    });
+                    await _controller!.setExposureOffset(value);
+                  },
+                ),
+              ),
+            ),
           )
+          ]
+        ),
       ),
-    ),
+
       floatingActionButton: FloatingActionButton(
         // Provide an onPressed callback.
         onPressed: () async {
