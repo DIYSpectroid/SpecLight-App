@@ -82,7 +82,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                             onPressed: () {
                               Navigator.push((context),
                                 MaterialPageRoute(builder:
-                                  (context) => const CropPhotoPage(),));
+                                  (context) => CropPhotoPage(imageFile: File(snapshot.data!.path)),));
                             },
                             icon: const Icon(Icons.verified_outlined, size: 18),
                             label: const Text("Continue"),
