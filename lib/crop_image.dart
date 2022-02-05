@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'analysis_page.dart';
+
 final ImagePicker picker = ImagePicker();
 
 class CropPhotoPage extends StatefulWidget{
@@ -19,24 +21,19 @@ class CropPhotoPage extends StatefulWidget{
 }
 
 
-
-
 class _CropPhotoPageState extends State<CropPhotoPage> {
-
   File? croppedFile;
-
-
 
   Future<File> cropImage() async {
       croppedFile = await ImageCropper.cropImage(
         sourcePath: widget.imageFile!.path,
-        // aspectRatioPresets: [
-        //   CropAspectRatioPreset.square,
-        //   CropAspectRatioPreset.ratio3x2,
-        //   CropAspectRatioPreset.original,
-        //   CropAspectRatioPreset.ratio4x3,
-        //   CropAspectRatioPreset.ratio16x9
-        // ],
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          // CropAspectRatioPreset.ratio3x2,
+          // CropAspectRatioPreset.original,
+          // CropAspectRatioPreset.ratio4x3,
+          // CropAspectRatioPreset.ratio16x9
+        ],
         androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Crop image',
             toolbarColor: Colors.lightGreen,
@@ -50,8 +47,6 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
       return croppedFile!;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +59,11 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
       future: cropImage(),
       builder: (BuildContext context, AsyncSnapshot<File?> snapshot){
         if(snapshot.hasData){
-          return Image.file(File(snapshot.data!.path));
+          //return Image.file(File(snapshot.data!.path));
+          Navigator.push((context),
+              MaterialPageRoute(builder:
+                  (context) => AnalysisPage(imageFilePath: snapshot.data!.path),));
+          return const Text("You shouldn't see this");
         } else{
           return const Text("Something went wrong :(");
         }
