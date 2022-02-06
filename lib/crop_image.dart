@@ -59,14 +59,58 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
       future: cropImage(),
       builder: (BuildContext context, AsyncSnapshot<File?> snapshot){
         if(snapshot.hasData){
-          //return Image.file(File(snapshot.data!.path));
-          Navigator.push((context),
-              MaterialPageRoute(builder:
-                  (context) => AnalysisPage(imageFilePath: snapshot.data!.path),));
-          return const Text("You shouldn't see this");
-        } else{
-          return const Text("Something went wrong :(");
+          return  Column(
+              children:
+              [
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Image.file(File(snapshot.data!.path)),
+                  ),
+                ),
+                Row(
+                    children:
+                    [
+                      Expanded
+                        (
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Navigator.push((context),
+                                MaterialPageRoute(builder:
+                                    (context) => CropPhotoPage(imageFile: File(snapshot.data!.path)),));
+                          },
+                          icon: const Icon(Icons.update, size: 18),
+                          label: const Text("Retry"),
+                        ),
+                      ),
+                      Expanded
+                        (
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Navigator.push((context),
+                                  MaterialPageRoute(builder:
+                                      (context) => AnalysisPage(imageFilePath: snapshot.data!.path),));
+                            },
+                            icon: const Icon(Icons.verified_outlined, size: 18),
+                            label: const Text("Continue"),
+                          )
+                      )
+                    ]
+                ),
+              ]
+          );
+        } else {
+          return const Text("Loading photo...");
         }
+        // if(snapshot.hasData){
+        //   //return Image.file(File(snapshot.data!.path));
+        //   Navigator.push((context),
+        //       MaterialPageRoute(builder:
+        //           (context) => AnalysisPage(imageFilePath: snapshot.data!.path),));
+        //   return const Text("You shouldn't see this");
+        // } else{
+        //   return const Text("Something went wrong :(");
+        // }
       }
       ),
       ),
