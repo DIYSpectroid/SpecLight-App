@@ -33,22 +33,23 @@ class ImageAnalysis{
       double mini = min(r, min(g,b));
       double dif = maxi - mini;
       double v = maxi;
-      double s = maxi == 0 ? 0 : dif/maxi;
-      double h = 0;
-      if (max != min){
+      double s = maxi == 0.0 ? 0.0 : dif/maxi;
+      double h = 0.0;
+      if (dif.abs() > 1e-9){
         if(maxi == r){
-          h = (g - b) / dif + (g < b ? 6 : 0);
+          h = (g - b) / dif + (g < b ? 6.0 : 0.0);
         }
         else if(maxi == g){
-          h = (b - r) / dif + 2;
+          h = (b - r) / dif + 2.0;
         }
         else if(maxi == b){
-          h = (r - g) / dif + 4;
+          h = (r - g) / dif + 4.0;
         }
 
         h /= 6;
       }
-      pixels.add(Pixel(h*360 as int, s*100 as int, v*100 as int))
+      pixels.add(Pixel((h*360).round(), (s*100).round(), (v*100).round()));
+
     }
     return pixels;
   }
@@ -60,6 +61,37 @@ class Pixel{
   late int value;
 
   Pixel(this.hue, this.saturation, this.value);
+}
+
+class Spectrum{
+  Map<double, double> spectrum = {};
+  static const int wavelengthMin = 400;
+  static const int wavelengthMax = 700;
+
+  List<double> getKeys(){
+    return spectrum.keys.toList();
+  }
+
+  List<double> getValues(){
+    return spectrum.values.toList();
+  }
+
+  Spectrum(List<Pixel> pixels){
+    for(Pixel pixel in pixels){
+      if(pixel.hue <= 270 && pixel.saturation > 70 && pixel.value > 25){
+        double wavelength = wavelengthMax - pixel.hue*(wavelengthMax-wavelengthMin)/270;
+        if(spectrum[wavelength] == null){
+          spectrum[wavelength] = 0;
+        }
+        spectrum[wavelength] = spectrum[wavelength]! + pixel.value.toDouble();
+      }
+    }
+    double maxValue = spectrum.values.reduce(max);
+    for(double wavelength in spectrum.keys){
+      spectrum[wavelength] = spectrum[wavelength]!*100/maxValue;
+    }
+
+  }
 }
 
 
