@@ -113,7 +113,7 @@ class _CameraPage extends State<CameraPage> {
                     setState(() {
                       _currentExposureOffset = value;
                     });
-                    await _controller!.setExposureOffset(value);
+                    await _controller.setExposureOffset(value);
                   },
                 ),
               ),
