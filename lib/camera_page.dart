@@ -19,9 +19,6 @@ class CameraPage extends StatefulWidget{
 
 class _CameraPage extends State<CameraPage> {
 
-  double _minAvailableExposureOffset = -0.5;
-  double _maxAvailableExposureOffset = 0.5;
-  double _currentExposureOffset = 0.0;
 
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
@@ -79,46 +76,6 @@ class _CameraPage extends State<CameraPage> {
                 },
               )
             ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                _currentExposureOffset.toStringAsFixed(1) + 'x',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-          ),
-          Expanded(
-            child: RotatedBox(
-              quarterTurns: 3,
-              child: Container(
-                height: 30,
-                child: Slider(
-                  value: _currentExposureOffset,
-                  min: _minAvailableExposureOffset,
-                  max: _maxAvailableExposureOffset,
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.white30,
-                  onChanged: (value) async {
-                    _controller
-                        .getMinExposureOffset()
-                        .then((value) => _minAvailableExposureOffset = value);
-                    _controller
-                        .getMaxExposureOffset()
-                        .then((value) => _maxAvailableExposureOffset = value);
-                    setState(() {
-                      _currentExposureOffset = value;
-                    });
-                    await _controller.setExposureOffset(value);
-                  },
-                ),
-              ),
-            ),
-          )
           ]
         ),
       ),
