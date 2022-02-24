@@ -61,7 +61,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
     return [
       charts.Series<LinearData, double>(
         id: 'Colors',
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+        colorFn: (_, __) => charts.MaterialPalette.gray.shadeDefault,
         domainFn: (LinearData xs, _) => xs.x,
         measureFn: (LinearData ys, _) => ys.y,
         data: data,
@@ -86,13 +86,21 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 List<charts.Series<LinearData, double>> seriesList = createPlotData(spectrum);
                 List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 sortedWavelength.sort((a, b) => a.compareTo(b));
-                return charts.LineChart(
-                    seriesList,
-                    animate: true,
-                    domainAxis: const charts.NumericAxisSpec(
-                      tickProviderSpec:
-                        charts.BasicNumericTickProviderSpec(zeroBound: false),
-                      viewport: charts.NumericExtents(400.0, 700.0))
+                return
+                ListView(
+                  children: [
+                    Image.file(File(widget.imageFilePath!)),
+                    Container(
+                    child: charts.LineChart(
+                        seriesList,
+                        animate: true,
+                        domainAxis: const charts.NumericAxisSpec(
+                          tickProviderSpec:
+                            charts.BasicNumericTickProviderSpec(zeroBound: false),
+                          viewport: charts.NumericExtents(Spectrum.wavelengthMin, Spectrum.wavelengthMax))
+                    ),
+                    height: 400),
+                  ],
                 );
               }
                else{

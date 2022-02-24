@@ -36,9 +36,9 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
         ],
         androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Crop image',
-            toolbarColor: Colors.lightGreen,
+            toolbarColor: Colors.grey,
             toolbarWidgetColor: Colors.black,
-            activeControlsWidgetColor: Colors.lightGreen,
+            activeControlsWidgetColor: Colors.grey,
             cropFrameColor: Colors.white,
             cropGridColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
