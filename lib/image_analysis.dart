@@ -65,8 +65,8 @@ class Pixel{
 
 class Spectrum{
   Map<double, double> spectrum = {};
-  static const int wavelengthMin = 400;
-  static const int wavelengthMax = 700;
+  static const int wavelengthMin = 380;
+  static const int wavelengthMax = 750;
 
   List<double> getKeys(){
     return spectrum.keys.toList();

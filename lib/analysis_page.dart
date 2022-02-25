@@ -89,7 +89,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 return
                 ListView(
                   children: [
-                    Image.file(File(widget.imageFilePath!)),
+
                     Container(
                     child: charts.LineChart(
                         seriesList,
@@ -100,6 +100,17 @@ class _AnalysisPageState extends State<AnalysisPage> {
                           viewport: charts.NumericExtents(Spectrum.wavelengthMin, Spectrum.wavelengthMax))
                     ),
                     height: 400),
+                    Row(
+                      children: [
+                        Padding(padding: EdgeInsets.all(13.8)),
+                        Expanded(child: Image.asset("assets/valid_spectrum.png")),
+                        Padding(padding: EdgeInsets.all(9.0)),
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.all(18.0)),
+                    Text("Analyzed spectrum", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Padding(padding: EdgeInsets.all(4.0)),
+                    Image.file(File(widget.imageFilePath!)),
                   ],
                 );
               }
