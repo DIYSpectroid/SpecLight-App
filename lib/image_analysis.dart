@@ -5,7 +5,7 @@ import 'package:image/image.dart' as img;
 
 class ImageAnalysis{
 
-  static List<int> getRGBABytesFromABGRInts(List<int> pixels){
+  static Future<List<int>> getRGBABytesFromABGRInts(List<int> pixels) async{
     List<int> bytes = [];
 
     for (var element in pixels) {
@@ -23,7 +23,7 @@ class ImageAnalysis{
     return image.data;
   }
 
-  static List<Pixel> convertRGBtoHSV(List<int> bytes){
+  static Future<List<Pixel>> convertRGBtoHSV(List<int> bytes) async{
     List<Pixel> pixels = [];
     for(int i=0;i<bytes.length-3;i+=4){
       double r = bytes[i]/255;
@@ -75,6 +75,7 @@ class Spectrum{
   List<double> getValues(){
     return spectrum.values.toList();
   }
+
 
   Spectrum(List<Pixel> pixels){
     for(Pixel pixel in pixels){

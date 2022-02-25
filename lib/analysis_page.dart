@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
@@ -69,6 +70,15 @@ class _AnalysisPageState extends State<AnalysisPage> {
     ];
   }
 
+  Future<Spectrum> getSpectrum() async{
+    List<int> image = await analyzeImage();
+    List<int> rgba = await compute(ImageAnalysis.getRGBABytesFromABGRInts, image);
+    List<Pixel> hsv =  await compute(ImageAnalysis.convertRGBtoHSV, rgba);
+
+    Spectrum spectrum =  Spectrum(hsv);
+    return spectrum;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,18 +88,16 @@ class _AnalysisPageState extends State<AnalysisPage> {
       ),
       body: Center(
         child:
-        FutureBuilder<List<int>>(
-            future: analyzeImage(),
-            builder: (BuildContext context, AsyncSnapshot<List<int>?> snapshot) {
+        FutureBuilder<Spectrum>(
+            future: getSpectrum(),
+            builder: (BuildContext context, AsyncSnapshot<Spectrum?> snapshot) {
               if(snapshot.hasData){
-                Spectrum spectrum = Spectrum(ImageAnalysis.convertRGBtoHSV(ImageAnalysis.getRGBABytesFromABGRInts(snapshot.data!)));
-                List<charts.Series<LinearData, double>> seriesList = createPlotData(spectrum);
-                List<double> sortedWavelength = spectrum.spectrum.keys.toList();
-                sortedWavelength.sort((a, b) => a.compareTo(b));
+                List<charts.Series<LinearData, double>> seriesList = createPlotData(snapshot.data!);
+                //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
+                //sortedWavelength.sort((a, b) => a.compareTo(b));
                 return
                 ListView(
                   children: [
-
                     Container(
                     child: charts.LineChart(
                         seriesList,
@@ -115,7 +123,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 );
               }
                else{
-                return const Text("Please wait for analysis...");
+                return const CircularProgressIndicator();
               }
             }
         ),
