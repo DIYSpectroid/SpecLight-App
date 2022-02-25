@@ -29,25 +29,9 @@ class AnalysisPage extends StatefulWidget{
 
 class _AnalysisPageState extends State<AnalysisPage> {
   Future<List<int>>? imagePixels;
-  int? width;
-  int? height;
   File? imageFile;
 
-  Future<void> getDimensions() async {
-    Image image = Image.file(File(widget.imageFilePath!));
-    Completer<ui.Image> completer = Completer<ui.Image>();
-    image.image
-        .resolve(const ImageConfiguration())
-        .addListener(ImageStreamListener((ImageInfo image, bool _) {
-      completer.complete(image.image);
-    }));
-    ui.Image info = await completer.future;
-    width = info.width;
-    height = info.height;
-  }
-
   Future<List<int>> analyzeImage() async {
-    await getDimensions();
     imagePixels = ImageAnalysis.getBytes(widget.imageFilePath!);
     return imagePixels!;
   }
@@ -122,6 +106,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
                   ],
                 );
               }
+              else if(snapshot.hasError){
+                return const Text("Something went wrong");
+              }
+
                else{
                 return const CircularProgressIndicator();
               }
