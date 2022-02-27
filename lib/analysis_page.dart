@@ -17,10 +17,10 @@ final ImagePicker picker = ImagePicker();
 
 class AnalysisPage extends StatefulWidget{
 
-  const AnalysisPage({Key? key, required this.imageFilePath}) : super(key: key);
+  const AnalysisPage({Key? key, required this.imageFilePath, required this.algorithm}) : super(key: key);
 
   final String? imageFilePath;
-
+  final Algorithm algorithm;
 
   @override
   State<AnalysisPage> createState() => _AnalysisPageState();

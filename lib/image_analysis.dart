@@ -2,6 +2,11 @@ import 'dart:io';
 import 'dart:math';
 import 'package:image/image.dart' as img;
 
+enum Algorithm {
+  linear,
+  polynomial,
+  position_based
+}
 
 class ImageAnalysis{
 
