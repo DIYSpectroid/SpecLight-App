@@ -121,8 +121,12 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                 ),
               ]
           );
-        } else {
-          return const Text("Loading photo...");
+        }
+        else if(snapshot.hasError){
+          return const Text("Something went wrong");
+        }
+        else {
+          return const CircularProgressIndicator();
         }
         // if(snapshot.hasData){
         //   //return Image.file(File(snapshot.data!.path));
