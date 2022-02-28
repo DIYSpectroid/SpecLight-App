@@ -70,8 +70,13 @@ class Pixel{
 
 class Spectrum{
   Map<double, double> spectrum = {};
+  List<Pixel> pixels;
   static const int wavelengthMin = 380;
   static const int wavelengthMax = 750;
+  static const int additionalHue = 12;
+  static const int maxHue = 270;
+  static const int minSaturation = 2;
+  static const int minValue = 20;
 
   List<double> getKeys(){
     return spectrum.keys.toList();
@@ -81,22 +86,36 @@ class Spectrum{
     return spectrum.values.toList();
   }
 
+  Spectrum(this.pixels, Algorithm algorithm){
+    switch(algorithm){
+      case Algorithm.linear:
+        linearHSVToSpectrum();
+        break;
+      case Algorithm.polynomial:
 
-  Spectrum(List<Pixel> pixels){
+        break;
+      case Algorithm.position_based:
+
+        break;
+    }
+  }
+
+  void linearHSVToSpectrum(){
     for(Pixel pixel in pixels){
-      if(pixel.hue <= 270 && pixel.saturation > 70 && pixel.value > 25){
-        double wavelength = wavelengthMax - pixel.hue*(wavelengthMax-wavelengthMin)/270;
+      int relativeHue = (pixel.hue + additionalHue) % 360;
+
+      if(relativeHue <= maxHue + additionalHue && pixel.saturation > minSaturation && pixel.value > minValue){
+        double wavelength = wavelengthMax - relativeHue*(wavelengthMax-wavelengthMin)/(maxHue + additionalHue);
         if(spectrum[wavelength] == null){
           spectrum[wavelength] = 0;
         }
-        spectrum[wavelength] = spectrum[wavelength]! + pixel.value.toDouble();
+        spectrum[wavelength] = spectrum[wavelength]! + pixel.value.toDouble()/pixel.saturation.toDouble();
       }
     }
     double maxValue = spectrum.values.reduce(max);
     for(double wavelength in spectrum.keys){
       spectrum[wavelength] = spectrum[wavelength]!*100/maxValue;
     }
-
   }
 }
 
