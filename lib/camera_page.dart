@@ -69,10 +69,14 @@ class _CameraPage extends State<CameraPage> {
               if (snapshot.connectionState == ConnectionState.done) {
                 // If the Future is complete, display the preview.
                 return CameraPreview(_controller);
-              } else {
+              }
+              else if(snapshot.hasError){
+                return const Text("Something went wrong");
+              }
+              else {
                 // Otherwise, display a loading indicator.
                 return const Center(child: CircularProgressIndicator());
-                  }
+              }
                 },
               )
             ),

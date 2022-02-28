@@ -6,6 +6,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'analysis_page.dart';
+import 'image_analysis.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -21,8 +22,11 @@ class CropPhotoPage extends StatefulWidget{
 }
 
 
+
 class _CropPhotoPageState extends State<CropPhotoPage> {
   File? croppedFile;
+  Algorithm algorithm = Algorithm.linear;
+  late final Future<File>? temp = cropImage();
 
   Future<File> cropImage() async {
       croppedFile = await ImageCropper.cropImage(
@@ -36,9 +40,9 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
         ],
         androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Crop image',
-            toolbarColor: Colors.lightGreen,
+            toolbarColor: Colors.grey,
             toolbarWidgetColor: Colors.black,
-            activeControlsWidgetColor: Colors.lightGreen,
+            activeControlsWidgetColor: Colors.grey,
             cropFrameColor: Colors.white,
             cropGridColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
@@ -49,6 +53,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
 
@@ -56,16 +61,33 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
       ),
       body: Center(
       child: FutureBuilder<File?>(
-      future: cropImage(),
+      future: temp,
       builder: (BuildContext context, AsyncSnapshot<File?> snapshot){
         if(snapshot.hasData){
           return  Column(
               children:
               [
                 Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Image.file(File(snapshot.data!.path)),
+                  child: ListView(
+                    children: [
+                      DropdownButton<Algorithm>(
+                        value: algorithm,
+                        onChanged: (Algorithm? newValue) {
+                          setState(() {
+                            algorithm = newValue!;
+                          });
+                        },
+                        items: Algorithm.values.map((Algorithm classType) {
+                          return DropdownMenuItem<Algorithm>(
+                              value: classType,
+                              child: Text(classType.toString()));
+                        }).toList()
+                      ),
+                      FittedBox(
+                        fit: BoxFit.contain,
+                        child: Image.file(File(snapshot.data!.path)),
+                      ),
+                    ]
                   ),
                 ),
                 Row(
@@ -89,7 +111,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                             onPressed: () {
                               Navigator.push((context),
                                   MaterialPageRoute(builder:
-                                      (context) => AnalysisPage(imageFilePath: snapshot.data!.path),));
+                                      (context) => AnalysisPage(imageFilePath: snapshot.data!.path, algorithm: this.algorithm),));
                             },
                             icon: const Icon(Icons.verified_outlined, size: 18),
                             label: const Text("Continue"),
@@ -99,8 +121,12 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                 ),
               ]
           );
-        } else {
-          return const Text("Loading photo...");
+        }
+        else if(snapshot.hasError){
+          return const Text("Something went wrong");
+        }
+        else {
+          return const CircularProgressIndicator();
         }
         // if(snapshot.hasData){
         //   //return Image.file(File(snapshot.data!.path));
