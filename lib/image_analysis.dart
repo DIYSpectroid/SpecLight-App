@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/rendering.dart';
+import 'package:spectroid/light_hue_conversion_extractor.dart';
 
 import 'image_data_extraction.dart';
 
@@ -28,20 +29,21 @@ class Spectrum{
       case Algorithm.linear:
         linearHSVToSpectrum();
         break;
-      case Algorithm.polynomial:
-
+      case Algorithm.openstaxBased:
+        openstaxBasedHSVToSpectrum();
         break;
-      case Algorithm.position_based:
-        positionBasedHSVToSpectrum();
+      case Algorithm.positionBasedLinear:
+        positionBasedLinearHSVToSpectrum();
+        break;
+      case Algorithm.positionBasedWithOpenstax:
+        positionBasedWithOpenstaxHSVToSpectrum();
         break;
     }
   }
-
-  void positionBasedHSVToSpectrum(){
-    List spectrumBounds = getSpectrumBounds();
+  void positionBasedWithOpenstaxHSVToSpectrum(){
+    List spectrumBounds = getSpectrumBoundsWithOpenstax();
     double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
-    print(wavelengthIncreaseFactor);
-    print(spectrumBounds);
+
     int currentPositionX = 0;
     for(HSVPixel pixel in pixels){
       if(isPixelValid(pixel)){
@@ -51,14 +53,40 @@ class Spectrum{
       currentPositionX++;
       currentPositionX = currentPositionX % imageWidth;
     }
-    normalizeSpectrumValues();
+    normalizeAndSampleSpectrumValues();
+  }
+
+  void openstaxBasedHSVToSpectrum(){
+    for(HSVPixel pixel in pixels){
+      if((pixel.hue >= HueConversionData.minFromOtherSide || pixel.hue <= HueConversionData.max) && pixel.value >= minValue && pixel.saturation >= minSaturation ){
+        double wavelength = HueConversionData.getWavelength(pixel.hue);
+        updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
+      }
+    }
+    normalizeAndSampleSpectrumValues();
+  }
+
+  void positionBasedLinearHSVToSpectrum(){
+    List spectrumBounds = getSpectrumBoundsLinear();
+    double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
+
+    int currentPositionX = 0;
+    for(HSVPixel pixel in pixels){
+      if(isPixelValid(pixel)){
+        double wavelength = spectrumBounds[2] + (currentPositionX - spectrumBounds[0])*wavelengthIncreaseFactor;
+        updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+    normalizeAndSampleSpectrumValues();
   }
 
   double positionBasedWaveLengthIncreaseFactor(List spectrumBounds){
     return (spectrumBounds[3] - spectrumBounds[2])/(spectrumBounds[1] - spectrumBounds[0]);
   }
 
-  List getSpectrumBounds() {
+  List getSpectrumBoundsLinear() {
     int currentPositionX = 0;
     int firstLightPositionX = imageWidth;
     int lastLightPositionX = 0;
@@ -82,6 +110,30 @@ class Spectrum{
     return [firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength];
   }
 
+  List getSpectrumBoundsWithOpenstax() {
+    int currentPositionX = 0;
+    int firstLightPositionX = imageWidth;
+    int lastLightPositionX = 0;
+    double firstLightWavelength = wavelengthMin.toDouble();
+    double lastLightWavelength = wavelengthMax.toDouble();
+
+    for (HSVPixel pixel in pixels) {
+      if (isPixelValid(pixel) && (pixel.hue < HueConversionData.max || pixel.hue > HueConversionData.minFromOtherSide)) {
+        firstLightPositionX = min(firstLightPositionX, currentPositionX);
+        lastLightPositionX = max(lastLightPositionX, currentPositionX);
+        if(firstLightPositionX == currentPositionX){
+          firstLightWavelength = HueConversionData.getWavelength(pixel.hue);
+        }
+        if(lastLightPositionX == currentPositionX){
+          lastLightWavelength = HueConversionData.getWavelength(pixel.hue);
+        }
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+    return [firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength];
+  }
+
   void linearHSVToSpectrum(){
     for(HSVPixel pixel in pixels){
       if(isPixelValid(pixel)){
@@ -89,7 +141,7 @@ class Spectrum{
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
       }
     }
-    normalizeSpectrumValues();
+    normalizeAndSampleSpectrumValues();
   }
 
   bool isPixelValid(pixel){
@@ -111,7 +163,7 @@ class Spectrum{
     spectrum[wavelength] = spectrum[wavelength]! + pixel.value.toDouble()/pixel.saturation.toDouble();
   }
 
-  void normalizeSpectrumValues(){
+  void normalizeAndSampleSpectrumValues(){
     double maxValue = spectrum.values.reduce(max);
     for(double wavelength in spectrum.keys){
       spectrum[wavelength] = spectrum[wavelength]!*100/maxValue;
@@ -135,8 +187,9 @@ class Spectrum{
 
 enum Algorithm {
   linear,
-  polynomial,
-  position_based
+  openstaxBased,
+  positionBasedLinear,
+  positionBasedWithOpenstax
 }
 
 

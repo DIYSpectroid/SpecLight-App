@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:spectroid/light_hue_conversion_extractor.dart';
 import 'choose_image.dart';
 
 void main() {
   runApp(const MyApp());
+  HueConversionData.initialize();
 }
 
 class MyApp extends StatelessWidget {

@@ -107,7 +107,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 );
               }
               else if(snapshot.hasError){
-                return const Text("Something went wrong");
+                return Text("Something went wrong\n" + snapshot.error.toString());
               }
 
                else{
