@@ -15,7 +15,7 @@ class Spectrum{
   static const int lowerHueBound = -12;
   static const int minSaturation = 2;
   static const int minValue = 15;
-  static const int highMinValue = 15;
+  static const int highMinValue = 80;
 
   List<double> getKeys(){
     return spectrum.keys.toList();
