@@ -4,7 +4,8 @@ import 'choose_image.dart';
 
 void main() {
   runApp(const MyApp());
-  HueConversionData.initialize();
+  HueConversionData.initialize(false);
+  HueConversionData.initialize(true);
 }
 
 class MyApp extends StatelessWidget {

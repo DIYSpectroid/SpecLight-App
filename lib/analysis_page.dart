@@ -95,7 +95,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Row(
                       children: [
                         Padding(padding: EdgeInsets.all(13.8)),
-                        Expanded(child: Image.asset("assets/valid_spectrum.png")),
+                        if(widget.algorithm != Algorithm.positionBasedWithWiki)
+                          Expanded(child: Image.asset("assets/valid_spectrum.png"))
+                        else
+                          Expanded(child: Image.asset("assets/wikispectrum.png")),
                         Padding(padding: EdgeInsets.all(9.0)),
                       ],
                     ),

@@ -15,6 +15,7 @@ class Spectrum{
   static const int lowerHueBound = -12;
   static const int minSaturation = 2;
   static const int minValue = 15;
+  static const int highMinValue = 15;
 
   List<double> getKeys(){
     return spectrum.keys.toList();
@@ -38,8 +39,47 @@ class Spectrum{
       case Algorithm.positionBasedWithOpenstax:
         positionBasedWithOpenstaxHSVToSpectrum();
         break;
+      case Algorithm.positionBasedWithHighValueControl:
+        positionBasedWithHighValueControl();
+        break;
+      case Algorithm.positionBasedWithWiki:
+        positionBasedWithWiki();
+        break;
     }
   }
+
+  void positionBasedWithWiki(){
+    List spectrumBounds = getSpectrumBoundsWithWiki();
+    double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
+
+    int currentPositionX = 0;
+    for(HSVPixel pixel in pixels){
+      if(isPixelValid(pixel)){
+        double wavelength = spectrumBounds[2] + (currentPositionX - spectrumBounds[0])*wavelengthIncreaseFactor;
+        updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+    normalizeAndSampleSpectrumValues();
+  }
+
+  void positionBasedWithHighValueControl(){
+    List spectrumBounds = getSpectrumBoundsWithHighValue();
+    double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
+
+    int currentPositionX = 0;
+    for(HSVPixel pixel in pixels){
+      if(isPixelValid(pixel)){
+        double wavelength = spectrumBounds[2] + (currentPositionX - spectrumBounds[0])*wavelengthIncreaseFactor;
+        updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+    normalizeAndSampleSpectrumValues();
+  }
+
   void positionBasedWithOpenstaxHSVToSpectrum(){
     List spectrumBounds = getSpectrumBoundsWithOpenstax();
     double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
@@ -59,7 +99,7 @@ class Spectrum{
   void openstaxBasedHSVToSpectrum(){
     for(HSVPixel pixel in pixels){
       if((pixel.hue >= HueConversionData.minFromOtherSide || pixel.hue <= HueConversionData.max) && pixel.value >= minValue && pixel.saturation >= minSaturation ){
-        double wavelength = HueConversionData.getWavelength(pixel.hue);
+        double wavelength = HueConversionData.getWavelength(pixel.hue, false);
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
       }
     }
@@ -122,15 +162,75 @@ class Spectrum{
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
         if(firstLightPositionX == currentPositionX){
-          firstLightWavelength = HueConversionData.getWavelength(pixel.hue);
+          firstLightWavelength = HueConversionData.getWavelength(pixel.hue, false);
+
         }
         if(lastLightPositionX == currentPositionX){
-          lastLightWavelength = HueConversionData.getWavelength(pixel.hue);
+          lastLightWavelength = HueConversionData.getWavelength(pixel.hue, false);
+
         }
       }
       currentPositionX++;
       currentPositionX = currentPositionX % imageWidth;
     }
+    print("First hue: ${firstLightWavelength}, at: x: $firstLightPositionX y: ${currentPositionX / imageWidth}");
+    print("Last hue: ${lastLightWavelength}, at: x: $lastLightPositionX y: ${currentPositionX / imageWidth}");
+    return [firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength];
+  }
+
+  List getSpectrumBoundsWithHighValue() {
+    int currentPositionX = 0;
+    int firstLightPositionX = imageWidth;
+    int lastLightPositionX = 0;
+    double firstLightWavelength = wavelengthMin.toDouble();
+    double lastLightWavelength = wavelengthMax.toDouble();
+
+    for (HSVPixel pixel in pixels) {
+      if (isPixelValidHighValue(pixel) && (pixel.hue < HueConversionData.max || pixel.hue > HueConversionData.minFromOtherSide)) {
+        firstLightPositionX = min(firstLightPositionX, currentPositionX);
+        lastLightPositionX = max(lastLightPositionX, currentPositionX);
+        if(firstLightPositionX == currentPositionX){
+          firstLightWavelength = HueConversionData.getWavelength(pixel.hue, false);
+
+        }
+        if(lastLightPositionX == currentPositionX){
+          lastLightWavelength = HueConversionData.getWavelength(pixel.hue, false);
+
+        }
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+    print("First hue: ${firstLightWavelength}, at: x: $firstLightPositionX y: ${currentPositionX / imageWidth}");
+    print("Last hue: ${lastLightWavelength}, at: x: $lastLightPositionX y: ${currentPositionX / imageWidth}");
+    return [firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength];
+  }
+
+  List getSpectrumBoundsWithWiki() {
+    int currentPositionX = 0;
+    int firstLightPositionX = imageWidth;
+    int lastLightPositionX = 0;
+    double firstLightWavelength = wavelengthMin.toDouble();
+    double lastLightWavelength = wavelengthMax.toDouble();
+
+    for (HSVPixel pixel in pixels) {
+      if (isPixelValidHighValue(pixel) && (pixel.hue < HueConversionData.max || pixel.hue > HueConversionData.minFromOtherSide)) {
+        firstLightPositionX = min(firstLightPositionX, currentPositionX);
+        lastLightPositionX = max(lastLightPositionX, currentPositionX);
+        if(firstLightPositionX == currentPositionX){
+          firstLightWavelength = HueConversionData.getWavelength(pixel.hue, true);
+
+        }
+        if(lastLightPositionX == currentPositionX){
+          lastLightWavelength = HueConversionData.getWavelength(pixel.hue, true);
+
+        }
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+    print("First hue: ${firstLightWavelength}, at: x: $firstLightPositionX y: ${currentPositionX / imageWidth}");
+    print("Last hue: ${lastLightWavelength}, at: x: $lastLightPositionX y: ${currentPositionX / imageWidth}");
     return [firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength];
   }
 
@@ -146,6 +246,10 @@ class Spectrum{
 
   bool isPixelValid(pixel){
     return getRelativeHue(pixel.hue) <= upperHueBound - lowerHueBound && pixel.saturation > minSaturation && pixel.value > minValue;
+  }
+
+  bool isPixelValidHighValue(pixel){
+    return getRelativeHue(pixel.hue) <= upperHueBound - lowerHueBound && pixel.saturation > minSaturation && pixel.value > highMinValue;
   }
 
   int getRelativeHue(int hue){
@@ -189,7 +293,9 @@ enum Algorithm {
   linear,
   openstaxBased,
   positionBasedLinear,
-  positionBasedWithOpenstax
+  positionBasedWithOpenstax,
+  positionBasedWithHighValueControl,
+  positionBasedWithWiki
 }
 
 

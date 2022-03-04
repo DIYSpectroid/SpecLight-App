@@ -4,13 +4,21 @@ import 'package:flutter/services.dart' show rootBundle;
 
 class HueConversionData{
   static Map<int, double> wavelengthByHue = {};
+  static Map<int, double> wavelengthByHueWiki = {};
   static bool _completed = false;
   static int max = 270;
   static int minFromOtherSide = 360;
 
-  static void initialize() async {
-    final String jsonData = await _loadAsset();
+  static void initialize(bool wiki) async {
+    final String jsonData;
+    if(!wiki) {
+      jsonData = await _loadAsset();
+    }
+    else{
+      jsonData = await _loadAssetWiki();
+    }
     final parsedJson = jsonDecode(jsonData);
+
     Map<dynamic, dynamic> jsonDict = parsedJson['wavelength'];
 
     for (String str in jsonDict.keys) {
@@ -23,13 +31,14 @@ class HueConversionData{
       }
     }
 
-    _complementHue(jsonDict);
+    _complementHue(jsonDict, wiki);
     _completed = true;
   }
 
-  static void _complementHue(Map<dynamic, dynamic> jsonDict){
+  static void _complementHue(Map<dynamic, dynamic> jsonDict, bool wiki){
     List<int> notExisting = [];
     int left = minFromOtherSide, right = minFromOtherSide;
+
 
     for (int i = max + 360 - minFromOtherSide; i >= 0; i--) {
       int targetHue = (i - 360 + minFromOtherSide) % 360;
@@ -37,11 +46,27 @@ class HueConversionData{
       if (jsonDict[targetHue.toString()] != null) {
         left = right;
         right = targetHue;
-        wavelengthByHue[targetHue] = jsonDict[targetHue.toString()];
+        if(!wiki) {
+          wavelengthByHue[targetHue] = jsonDict[targetHue.toString()];
+        }
+        else{
+          wavelengthByHueWiki[targetHue] = jsonDict[targetHue.toString()];
+        }
 
         for (int j = 0; j < notExisting.length; j++) {
-          wavelengthByHue[notExisting[j]] = ((notExisting.length - j) * wavelengthByHue[left]! + (j + 1) * wavelengthByHue[right]!) /
-                  (notExisting.length + 1);
+
+          if(!wiki) {
+            wavelengthByHue[notExisting[j]] =
+                ((notExisting.length - j) * wavelengthByHue[left]! +
+                    (j + 1) * wavelengthByHue[right]!) /
+                    (notExisting.length + 1);
+          }
+          else{
+            wavelengthByHueWiki[notExisting[j]] =
+                ((notExisting.length - j) * wavelengthByHueWiki[left]! +
+                    (j + 1) * wavelengthByHueWiki[right]!) /
+                    (notExisting.length + 1);
+          }
         }
         notExisting.clear();
       }
@@ -49,17 +74,37 @@ class HueConversionData{
         notExisting.add(targetHue);
       }
     }
-    wavelengthByHue[360] = wavelengthByHue[0]!;
+    if(!wiki) {
+      wavelengthByHue[360] = wavelengthByHue[0]!;
+    }
+    else{
+      for(int i = 360; i>350; i--) {
+        wavelengthByHueWiki[i] = wavelengthByHueWiki[0]!;
+      }
+    }
   }
 
-  static double getWavelength(int hue){
+  static double getWavelength(int hue, bool wiki){
     if(!_completed){
       throw Exception("Not completed");
     }
-    return wavelengthByHue[hue]!;
+    if(!wiki) {
+      return wavelengthByHue[hue]!;
+    }
+    else{
+      print("len of wiki ${wavelengthByHueWiki.length}");
+      print(hue);
+      return wavelengthByHueWiki[hue]!;
+    }
   }
 
   static Future<String> _loadAsset() async {
     return await rootBundle.loadString('assets/spectrum.json');
+  }
+
+  static Future<String> _loadAssetWiki() async {
+    String string = await rootBundle.loadString('assets/spectrumWiki.json');
+
+    return string;
   }
 }
