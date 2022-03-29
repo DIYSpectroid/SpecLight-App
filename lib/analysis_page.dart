@@ -63,6 +63,22 @@ class _AnalysisPageState extends State<AnalysisPage> {
     return spectrum;
   }
 
+  double chosen_x = 0;
+  double chosen_y = 0;
+
+  _onSelectionChanged(charts.SelectionModel model){
+    final selectedDatum = model.selectedDatum;
+    double x = 0;
+    double y = 0;
+    print('test');
+    if (selectedDatum.isNotEmpty) {
+       x = selectedDatum.first.datum.x;
+       y = selectedDatum.last.datum.y;
+    }
+
+    setState(() {chosen_x = x; chosen_y = y;});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,6 +102,12 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     child: charts.LineChart(
                         seriesList,
                         animate: true,
+                        selectionModels: [
+                          new charts.SelectionModelConfig(
+                            type: charts.SelectionModelType.info,
+                            changedListener: _onSelectionChanged,
+                          )
+                        ],
                         domainAxis: const charts.NumericAxisSpec(
                           tickProviderSpec:
                             charts.BasicNumericTickProviderSpec(zeroBound: false),
@@ -99,6 +121,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                         Padding(padding: EdgeInsets.all(9.0)),
                       ],
                     ),
+                    Padding(padding: EdgeInsets.all(18.0)),
+                    Text("Selected x: $chosen_x, selected y: $chosen_y"),
                     Padding(padding: EdgeInsets.all(18.0)),
                     Text("Analyzed spectrum", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
                     Padding(padding: EdgeInsets.all(4.0)),
