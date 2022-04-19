@@ -4,7 +4,9 @@ import 'choose_image.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'language_change.dart';
 import 'new_ui_components.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,39 +38,34 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
 
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Spectroid',
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        Locale('en', ''),
-        Locale('pl', ''),
-        Locale('uk', ''),
-        Locale('fr', ''),
-        Locale('de', ''),
-        Locale('zh', ''),
-        Locale('sv', '')
-      ],
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: buildMaterialColor(Color(0xFFD2D0E7)),
+    return ChangeNotifierProvider(
+      create: (context) => AppLocale(),
+      child: Consumer<AppLocale>(
+          builder: (context, locale, child) {
+            return MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales:[
+              Locale('en', ''),
+              Locale('pl', ''),
+              Locale('uk', ''),
+              Locale('fr', ''),
+              Locale('de', ''),
+              Locale('zh', ''),
+              Locale('sv', '')
+              ],
+              locale: locale.locale, // NEW
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                primarySwatch: buildMaterialColor(Color(0xFFD2D0E7)),
+              ),
+              home: MyHomePage(title: 'SPECLIGHT App'),
+            );
+          }
       ),
-      home: const MyHomePage(title: 'SPECLIGHT App'),
     );
   }
 }
@@ -171,7 +168,11 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(
               child: Row(
                 children:[
-                  SquareButton(icon: Icons.settings_outlined, label: AppLocalizations.of(context)!.settings),
+                  SquareButton(icon: Icons.settings_outlined, label: AppLocalizations.of(context)!.settings, onPressed: (){
+                    Navigator.push((context),
+                        MaterialPageRoute(builder:
+                            (context) => LanguageChange()));
+                  }),
                   Expanded(child: Container()),
                   SquareButton(icon: Icons.language_outlined, label: AppLocalizations.of(context)!.website),
                   Expanded(child: Container()),
