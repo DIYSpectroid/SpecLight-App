@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spectroid/light_hue_conversion_extractor.dart';
 import 'choose_image.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,6 +8,8 @@ import 'new_ui_components.dart';
 
 void main() {
   runApp(const MyApp());
+  HueConversionData.initialize(false);
+  HueConversionData.initialize(true);
 }
 
 MaterialColor buildMaterialColor(Color color) {
