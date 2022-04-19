@@ -1,0 +1,29 @@
+{
+    "take_analysis": "Take a photo for analysis",
+    "@take_analysis": {
+      "description": "Message on button leading to taking photo screen"
+    },
+    "send_analysis": "Send a photo for analysis",
+    "@send_analysis": {
+      "description": "Message on button leading to choosing photo from files"
+    },
+    "instruction": "How to build a spectroscope",
+    "@instruction": {
+      "description": "Message on button leading to screen with instructions to assembling papercraft spectroscope"
+    },
+    "help": "Help",
+    "@help": {
+      "description": "Message on button leading to help screen"
+    },
+    "examples": "Examples",
+    "@examples": {
+      "description": "Message on button leading to screen with examples"
+    },
+    "share": "Share SPECLIGHT App",
+    "@share": {
+      "description": "Message on button leading to sharing the app with your firends"
+    },
+    "settings": "Settings",
+    "website": "Website",
+    "credits": "Credits"
+}
