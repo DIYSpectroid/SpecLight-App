@@ -1,0 +1,90 @@
+{
+    "take_analysis": "Take a photo for analysis",
+    "@take_analysis": {
+      "description": "Message on button leading to taking photo screen"
+    },
+    "send_analysis": "Send a photo for analysis",
+    "@send_analysis": {
+      "description": "Message on button leading to choosing photo from files"
+    },
+    "instruction": "How to build a spectroscope",
+    "@instruction": {
+      "description": "Message on button leading to screen with instructions to assembling papercraft spectroscope"
+    },
+    "help": "Help",
+    "@help": {
+      "description": "Message on button leading to help screen"
+    },
+    "examples": "Examples",
+    "@examples": {
+      "description": "Message on button leading to screen with examples"
+    },
+    "share": "Share SPECLIGHT App",
+    "@share": {
+      "description": "Message on button leading to sharing the app with your friends"
+    },
+    "settings": "Settings",
+    "@settings": {
+        "description": "Message on button leading to the settings section"
+    },
+    "website": "Website",
+    "@website": {
+        "description": "Message on button leading to project website"
+    },
+    "credits": "Credits",
+    "@credits": {
+        "description": "Message on button leading to credits screen"
+    },
+    "choose_language": "Language",
+    "@choose_language": {
+        "description": "Message on language choosing screen appbar"
+    },
+    "camera_header": "Camera",
+    "@camera_header": {
+        "description": "Message on camera screen appbar"
+    },
+    "choose_header": "Choose photo to analyze",
+    "@choose_header": {
+        "description": "Message on photo choosing screen appbar"
+    },
+    "crop_header": "Crop photo to analyze",
+    "@crop_header": {
+        "description": "Message on photo cropping screen appbar"
+    },
+    "analysis_header": "Photo analysis",
+    "@analysis_header": {
+        "description": "Message on screen with analysis result appbar"
+    },
+    "analyzed_spectrum": "Analyzed spectrum",
+    "@analyzed_spectrum": {
+        "description": "Tooltip over photo which went through analysis"
+    },
+    "credits_header": "Credits",
+    "@credits_header": {
+        "description": "Message on screen with credits appbar"
+    },
+    "authors": "Authors",
+    "@authors": {
+        "description": "Authors subsection in credits"
+    },
+    "supervisors": "Project supervisors",
+    "@supervisors": {
+        "description": "Supervisors subsection in credits"
+    },
+    "special_thanks": "Special thanks",
+    "@special_thanks": {
+        "description": "Special thanks subsection in credits"
+    },
+    "error_message": "Something went wrong",
+    "@error_message": {
+        "description": "Generic error message"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Generic retry button"
+    },
+    "next": "Continue",
+    "@next": {
+        "description": "Generic continue button"
+    }
+}

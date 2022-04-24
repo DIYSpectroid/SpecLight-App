@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 
@@ -54,8 +55,7 @@ class _CameraPage extends State<CameraPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-        title: const Text("Camera"),
+        title: Text(AppLocalizations.of(context)!.choose_header),
       ),
       body: Center(
         child: Stack(children: <Widget>
@@ -71,7 +71,7 @@ class _CameraPage extends State<CameraPage> {
                 return CameraPreview(_controller);
               }
               else if(snapshot.hasError){
-                return const Text("Something went wrong");
+                return Text(AppLocalizations.of(context)!.error_message);
               }
               else {
                 // Otherwise, display a loading indicator.

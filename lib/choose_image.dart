@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spectroid/crop_image.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'camera_page.dart';
 
@@ -45,7 +46,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
     return Scaffold(
       appBar: AppBar(
 
-        title: const Text("Choose photo to analyze"),
+        title: Text(AppLocalizations.of(context)!.choose_header),
       ),
       body: Center(
           child: FutureBuilder<XFile?>(
@@ -73,7 +74,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                                       (context) => ChoosePhotoPage(isCameraChosen: widget.isCameraChosen),));
                             },
                             icon: const Icon(Icons.update, size: 18),
-                            label: const Text("Retry"),
+                            label: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ),
                         Expanded
@@ -85,7 +86,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                                   (context) => CropPhotoPage(imageFile: File(snapshot.data!.path)),));
                             },
                             icon: const Icon(Icons.verified_outlined, size: 18),
-                            label: const Text("Continue"),
+                            label: Text(AppLocalizations.of(context)!.next),
                           )
                         )
                       ]
@@ -93,7 +94,7 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
                   ]
                 );
               } else {
-                return const Text("Loading photo...");
+                return const CircularProgressIndicator();
               }
             },
           )
