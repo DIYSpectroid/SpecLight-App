@@ -9,18 +9,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spectroid/image_analysis.dart';
-import 'package:image/image.dart' as img;
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:spectroid/image_data_extraction.dart';
 
 
 final ImagePicker picker = ImagePicker();
 
 class AnalysisPage extends StatefulWidget{
 
-  const AnalysisPage({Key? key, required this.imageFilePath, required this.algorithm}) : super(key: key);
+  const AnalysisPage({Key? key, required this.imageFilePath, required this.algorithm, required this.grating}) : super(key: key);
 
   final String? imageFilePath;
   final Algorithm algorithm;
+  final Grating grating;
 
   @override
   State<AnalysisPage> createState() => _AnalysisPageState();
@@ -28,12 +29,12 @@ class AnalysisPage extends StatefulWidget{
 }
 
 class _AnalysisPageState extends State<AnalysisPage> {
-  Future<List<int>>? imagePixels;
+  Future<ImageData>? imageData;
   File? imageFile;
 
-  Future<List<int>> analyzeImage() async {
-    imagePixels = ImageAnalysis.getBytes(widget.imageFilePath!);
-    return imagePixels!;
+  Future<ImageData> analyzeImage() async {
+    imageData = ImageDataExtraction.getImageData(widget.imageFilePath!);
+    return imageData!;
   }
 
   List<charts.Series<LinearData, double>> createPlotData(Spectrum spectrum) {
@@ -55,11 +56,12 @@ class _AnalysisPageState extends State<AnalysisPage> {
   }
 
   Future<Spectrum> getSpectrum() async{
-    List<int> image = await analyzeImage();
-    List<int> rgba = await compute(ImageAnalysis.getRGBABytesFromABGRInts, image);
-    List<Pixel> hsv =  await compute(ImageAnalysis.convertRGBtoHSV, rgba);
+    ImageData imageData = await analyzeImage();
+    List<int> rgba = await compute(ImageDataExtraction.getRGBABytesFromABGRInts, imageData.bytes);
+    List<HSVPixel> hsvPixels =  await compute(ImageDataExtraction.convertBytesToHSV, rgba);
+    List<RGBPixel> rgbPixels = await compute(ImageDataExtraction.convertBytesToRGB, rgba);
 
-    Spectrum spectrum =  Spectrum(hsv);
+    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, rgbPixels, widget.algorithm, widget.grating);
     return spectrum;
   }
 
@@ -95,7 +97,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Row(
                       children: [
                         Padding(padding: EdgeInsets.all(13.8)),
-                        Expanded(child: Image.asset("assets/valid_spectrum.png")),
+                        if(widget.algorithm != Algorithm.hsvPositionBasedWithWiki)
+                          Expanded(child: Image.asset("assets/spectrumGen.jpg"))
+                        else
+                          Expanded(child: Image.asset("assets/wikispectrum.png")),
                         Padding(padding: EdgeInsets.all(9.0)),
                       ],
                     ),
@@ -107,7 +112,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 );
               }
               else if(snapshot.hasError){
-                return const Text("Something went wrong");
+                return Text("Something went wrong\n" + snapshot.error.toString());
               }
 
                else{
