@@ -66,7 +66,6 @@ class LanguageChange extends StatelessWidget {
               ImageButton(
                 imagePath: "assets/france.png",
                 label: "Français",
-                onPressed: (){language.changeLocale(Locale('fr'));},
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(

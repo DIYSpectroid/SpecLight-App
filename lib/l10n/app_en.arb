@@ -21,10 +21,54 @@
     },
     "share": "Share SPECLIGHT App",
     "@share": {
-      "description": "Message on button leading to sharing the app with your firends"
+      "description": "Message on button leading to sharing the app with your friends"
     },
     "settings": "Settings",
+    "@settings": {
+        "description": "Message on button leading to the settings section"
+    },
     "website": "Website",
+    "@website": {
+        "description": "Message on button leading to project website"
+    },
     "credits": "Credits",
-    "choose_language": "Language"
+    "@credits": {
+        "description": "Message on button leading to credits screen"
+    },
+    "choose_language": "Language",
+    "@choose_language": {
+        "description": "Message on language choosing screen appbar"
+    },
+    "camera_header": "Camera",
+    "@camera_header": {
+        "description": "Message on camera screen appbar"
+    },
+    "choose_header": "Choose photo to analyze",
+    "@choose_header": {
+        "description": "Message on photo choosing screen appbar"
+    },
+    "crop_header": "Crop photo to analyze",
+    "@crop_header": {
+        "description": "Message on photo cropping screen appbar"
+    },
+    "analysis_header": "Photo analysis",
+    "@analysis_header": {
+        "description": "Message on screen with analysis result appbar"
+    },
+    "analyzed_spectrum": "Analyzed spectrum",
+    "@analyzed_spectrum": {
+        "description": "Tooltip over photo which went through analysis"
+    },
+    "error_message": "Something went wrong",
+    "@error_message": {
+        "description": "Generic error message"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Generic retry button"
+    },
+    "next": "Continue",
+    "@next": {
+        "description": "Generic continue button"
+    }
 }

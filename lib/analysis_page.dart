@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
     return Scaffold(
       appBar: AppBar(
 
-        title: const Text("Photo analysis"),
+        title: Text(AppLocalizations.of(context)!.analysis_header),
       ),
       body: Center(
         child:
@@ -127,7 +128,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Padding(padding: EdgeInsets.all(18.0)),
                     Text("Selected x: $chosen_x, selected y: $chosen_y"),
                     Padding(padding: EdgeInsets.all(18.0)),
-                    Text("Analyzed spectrum", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
                     Padding(padding: EdgeInsets.all(4.0)),
                     Image.file(File(widget.imageFilePath!)),
                   ],

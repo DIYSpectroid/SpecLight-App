@@ -8,5 +8,13 @@
   "settings": "Ustawienia",
   "website": "Strona",
   "credits": "Twórcy",
-  "choose_language": "Język"
+  "choose_language": "Język",
+  "camera_header": "Aparat",
+  "choose_header": "Wybierz zdjęcie do analizy",
+  "crop_header": "Przytnij zdjęcie do analizy",
+  "analysis_header": "Analiza zdjęcia",
+  "analyzed_spectrum": "Analizowane spektrum",
+  "error_message": "Coś poszło nie tak",
+  "retry": "Ponów",
+  "next": "Kontynuuj"
 }

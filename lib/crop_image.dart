@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'analysis_page.dart';
 import 'image_analysis.dart';
@@ -38,8 +39,8 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
           // CropAspectRatioPreset.ratio4x3,
           // CropAspectRatioPreset.ratio16x9
         ],
-        androidUiSettings: const AndroidUiSettings(
-            toolbarTitle: 'Crop image',
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: AppLocalizations.of(context)!.crop_header,
             toolbarColor: Colors.grey,
             toolbarWidgetColor: Colors.black,
             activeControlsWidgetColor: Colors.grey,
@@ -57,7 +58,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
     return Scaffold(
       appBar: AppBar(
 
-        title: const Text("Crop photo to analyze"),
+        title: Text(AppLocalizations.of(context)!.crop_header),
       ),
       body: Center(
       child: FutureBuilder<File?>(
@@ -102,7 +103,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                                     (context) => CropPhotoPage(imageFile: File(snapshot.data!.path)),));
                           },
                           icon: const Icon(Icons.update, size: 18),
-                          label: const Text("Retry"),
+                          label: Text(AppLocalizations.of(context)!.retry),
                         ),
                       ),
                       Expanded
@@ -114,7 +115,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                                       (context) => AnalysisPage(imageFilePath: snapshot.data!.path, algorithm: this.algorithm),));
                             },
                             icon: const Icon(Icons.verified_outlined, size: 18),
-                            label: const Text("Continue"),
+                            label: Text(AppLocalizations.of(context)!.next),
                           )
                       )
                     ]
