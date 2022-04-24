@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main.dart';
 import 'new_ui_components.dart';
@@ -20,6 +21,12 @@ class LanguageChange extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    void _setLanguage (String language) async{
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('language', language);
+    }
+
+
     var language = Provider.of<AppLocale>(context);
     const double spacing = 12;
 
@@ -37,13 +44,13 @@ class LanguageChange extends StatelessWidget {
               ImageButton(
                 imagePath: "assets/united kingdom.png",
                 label: "English",
-                onPressed: (){language.changeLocale(Locale('en'));},
+                onPressed: (){language.changeLocale(Locale('en')); _setLanguage('en');},
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
                 imagePath: "assets/poland.png",
                 label: "Polski",
-                onPressed: (){language.changeLocale(Locale('pl'));},
+                onPressed: (){language.changeLocale(Locale('pl')); _setLanguage('pl');},
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(

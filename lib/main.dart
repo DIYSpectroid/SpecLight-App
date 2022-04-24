@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/light_hue_conversion_extractor.dart';
 import 'choose_image.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -90,8 +91,29 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLanguage();
+  }
+
+
+
+  void _loadLanguage() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    var language = Provider.of<AppLocale>(context, listen: false);
+    setState(() {
+      if(prefs.containsKey('language')) {
+        language.changeLocale(Locale(prefs.getString('language')!));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+
 
     const double spacing = 12;
 
@@ -127,42 +149,26 @@ class _MyHomePageState extends State<MyHomePage> {
             MenuButton(
               icon: Icons.ondemand_video_outlined,
               label: AppLocalizations.of(context)!.instruction,
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: false),));
-              },
+              onPressed: (){},
             ),
             Padding(padding: EdgeInsets.all(spacing)),
             MenuButton(
               icon: Icons.help_outline,
               label: AppLocalizations.of(context)!.help,
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: false),));
-              },
+              onPressed: (){},
             ),
             Padding(padding: EdgeInsets.all(spacing)),
             MenuButton(
               icon: Icons.insert_photo_outlined,
               label: AppLocalizations.of(context)!.examples,
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: false),));
-              },
+              onPressed: (){},
             ),
             Padding(padding: EdgeInsets.all(spacing * 4)),
             MenuButton(
               icon: Icons.share_outlined,
               label: AppLocalizations.of(context)!.share,
               color: Color(0x1AE75EA0),
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: false),));
-              },
+              onPressed: (){},
             ),
             Padding(padding: EdgeInsets.all(spacing)),
             SizedBox(
