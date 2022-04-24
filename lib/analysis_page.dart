@@ -57,9 +57,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
   Future<Spectrum> getSpectrum() async{
     ImageData imageData = await analyzeImage();
     List<int> rgba = await compute(ImageDataExtraction.getRGBABytesFromABGRInts, imageData.bytes);
-    List<HSVPixel> hsvPixels =  await compute(ImageDataExtraction.convertRGBtoHSV, rgba);
+    List<HSVPixel> hsvPixels =  await compute(ImageDataExtraction.convertBytesToHSV, rgba);
+    List<RGBPixel> rgbPixels = await compute(ImageDataExtraction.convertBytesToRGB, rgba);
 
-    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, widget.algorithm);
+    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, rgbPixels, widget.algorithm);
     return spectrum;
   }
 
@@ -95,8 +96,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Row(
                       children: [
                         Padding(padding: EdgeInsets.all(13.8)),
-                        if(widget.algorithm != Algorithm.positionBasedWithWiki)
-                          Expanded(child: Image.asset("assets/valid_spectrum.png"))
+                        if(widget.algorithm != Algorithm.hsvPositionBasedWithWiki)
+                          Expanded(child: Image.asset("assets/spectrumGen.jpg"))
                         else
                           Expanded(child: Image.asset("assets/wikispectrum.png")),
                         Padding(padding: EdgeInsets.all(9.0)),

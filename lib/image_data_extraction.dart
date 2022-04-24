@@ -1,4 +1,6 @@
+import 'dart:ffi';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:image/image.dart' as img;
 import 'dart:io';
 
@@ -22,7 +24,7 @@ class ImageDataExtraction{
     return ImageData(image.data, image.height, image.width);
   }
 
-  static Future<List<HSVPixel>> convertRGBtoHSV(List<int> bytes) async{
+  static Future<List<HSVPixel>> convertBytesToHSV(List<int> bytes) async{
     List<HSVPixel> pixels = [];
     for(int i=0;i<bytes.length-3;i+=4){
       double r = bytes[i]/255;
@@ -53,6 +55,14 @@ class ImageDataExtraction{
     }
     return pixels;
   }
+
+  static Future<List<RGBPixel>> convertBytesToRGB(List<int> bytes) async{
+    List<RGBPixel> pixels = [];
+    for(int i=0;i<bytes.length-3;i+=4) {
+      pixels.add(RGBPixel(bytes[i], bytes[i+1], bytes[i+2]));
+    }
+    return pixels;
+  }
 }
 
 class ImageData{
@@ -69,4 +79,15 @@ class HSVPixel{
   int value;
 
   HSVPixel(this.hue, this.saturation, this.value);
+}
+
+class RGBPixel{
+  int red;
+  int green;
+  int blue;
+  late int intensity;
+
+  RGBPixel(this.red, this.green, this.blue){
+    intensity = red + green + blue;
+  }
 }

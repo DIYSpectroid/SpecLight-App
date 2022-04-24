@@ -25,7 +25,7 @@ class CropPhotoPage extends StatefulWidget{
 
 class _CropPhotoPageState extends State<CropPhotoPage> {
   File? croppedFile;
-  Algorithm algorithm = Algorithm.positionBasedLinear;
+  Algorithm algorithm = Algorithm.hsvPositionBasedLinear;
   late final Future<File>? temp = cropImage();
 
   Future<File> cropImage() async {

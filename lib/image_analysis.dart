@@ -1,19 +1,23 @@
 import 'dart:math';
 import 'package:flutter/rendering.dart';
+import 'package:spectroid/image_analysis_rgb.dart';
 import 'package:spectroid/light_hue_conversion_extractor.dart';
 
 import 'image_data_extraction.dart';
 
 class Spectrum{
   Map<double, double> spectrum = {};
-  List<HSVPixel> pixels;
+  List<HSVPixel> hsvPixels;
+
   int imageWidth;
   int imageHeight;
-  static const int wavelengthMin = 380;
-  static const int wavelengthMax = 750;
+  late List<double> relativePosToWavelengthFunctionCoefficients;
+  late List<double> inverseRelativePosToWavelengthFunctionCoefficients;
+  static const int wavelengthMin = 400;
+  static const int wavelengthMax = 700;
   static const int upperHueBound = 270;
-  static const int lowerHueBound = -12;
-  static const int minSaturation = 2;
+  static const int lowerHueBound = -6;
+  static const int minSaturation = 7;
   static const int minValue = 15;
   static const int highMinValue = 80;
 
@@ -25,27 +29,39 @@ class Spectrum{
     return spectrum.values.toList();
   }
 
-  Spectrum(this.pixels, this.imageWidth, this.imageHeight, Algorithm algorithm){
+  Spectrum(this.hsvPixels, this.imageWidth, this.imageHeight, List<RGBPixel> rgbPixels, Algorithm algorithm){
+    chooseCoefficients(1000);
     switch(algorithm){
-      case Algorithm.linear:
+      case Algorithm.hsvLinear:
         linearHSVToSpectrum();
         break;
-      case Algorithm.openstaxBased:
+      case Algorithm.hsvOpenstaxBased:
         openstaxBasedHSVToSpectrum();
         break;
-      case Algorithm.positionBasedLinear:
+      case Algorithm.hsvPositionBasedLinear:
         positionBasedLinearHSVToSpectrum();
         break;
-      case Algorithm.positionBasedWithOpenstax:
+      case Algorithm.hsvPositionBasedPolynomial:
+        positionBasedPolynomialHSVToSpectrum();
+        break;
+      case Algorithm.hsvPositionBasedPolynomialWithOpenstax:
+        hsvPositionBasedPolynomialWithOpenstax();
+        break;
+      case Algorithm.hsvPositionBasedWithOpenstax:
         positionBasedWithOpenstaxHSVToSpectrum();
         break;
-      case Algorithm.positionBasedWithHighValueControl:
+      case Algorithm.hsvPositionBasedWithHighValueControl:
         positionBasedWithHighValueControl();
         break;
-      case Algorithm.positionBasedWithWiki:
+      case Algorithm.hsvPositionBasedWithWiki:
         positionBasedWithWiki();
         break;
+      case Algorithm.rgbTest:
+        RGBAnalyser rgbAnalyser = RGBAnalyser(rgbPixels, this.imageWidth, this.imageHeight);
+        //spectrum = rgbAnalyser.rgbTest();
+
     }
+    normalizeAndSampleSpectrumValues();
   }
 
   void positionBasedWithWiki(){
@@ -53,7 +69,7 @@ class Spectrum{
     double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
 
     int currentPositionX = 0;
-    for(HSVPixel pixel in pixels){
+    for(HSVPixel pixel in hsvPixels){
       if(isPixelValid(pixel)){
         double wavelength = spectrumBounds[2] + (currentPositionX - spectrumBounds[0])*wavelengthIncreaseFactor;
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
@@ -61,7 +77,6 @@ class Spectrum{
       currentPositionX++;
       currentPositionX = currentPositionX % imageWidth;
     }
-    normalizeAndSampleSpectrumValues();
   }
 
   void positionBasedWithHighValueControl(){
@@ -69,7 +84,7 @@ class Spectrum{
     double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
 
     int currentPositionX = 0;
-    for(HSVPixel pixel in pixels){
+    for(HSVPixel pixel in hsvPixels){
       if(isPixelValid(pixel)){
         double wavelength = spectrumBounds[2] + (currentPositionX - spectrumBounds[0])*wavelengthIncreaseFactor;
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
@@ -77,7 +92,6 @@ class Spectrum{
       currentPositionX++;
       currentPositionX = currentPositionX % imageWidth;
     }
-    normalizeAndSampleSpectrumValues();
   }
 
   void positionBasedWithOpenstaxHSVToSpectrum(){
@@ -85,7 +99,7 @@ class Spectrum{
     double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
 
     int currentPositionX = 0;
-    for(HSVPixel pixel in pixels){
+    for(HSVPixel pixel in hsvPixels){
       if(isPixelValid(pixel)){
         double wavelength = spectrumBounds[2] + (currentPositionX - spectrumBounds[0])*wavelengthIncreaseFactor;
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
@@ -93,17 +107,87 @@ class Spectrum{
       currentPositionX++;
       currentPositionX = currentPositionX % imageWidth;
     }
-    normalizeAndSampleSpectrumValues();
   }
 
   void openstaxBasedHSVToSpectrum(){
-    for(HSVPixel pixel in pixels){
+    for(HSVPixel pixel in hsvPixels){
       if((pixel.hue >= HueConversionData.minFromOtherSide || pixel.hue <= HueConversionData.max) && pixel.value >= minValue && pixel.saturation >= minSaturation ){
         double wavelength = HueConversionData.getWavelength(pixel.hue, false);
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
       }
     }
-    normalizeAndSampleSpectrumValues();
+  }
+
+  void hsvPositionBasedPolynomialWithOpenstax(){
+    List spectrumBounds = getSpectrumBoundsWithOpenstax();
+
+    int currentPositionX = 0;
+    for(HSVPixel pixel in hsvPixels){
+      if(isPixelValid(pixel)){
+        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBounds);
+        updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+  }
+
+  void positionBasedPolynomialHSVToSpectrum(){
+    List spectrumBounds = getSpectrumBoundsLinear();
+
+    int currentPositionX = 0;
+    for(HSVPixel pixel in hsvPixels){
+      if(isPixelValid(pixel)){
+        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBounds);
+        updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
+      }
+      currentPositionX++;
+      currentPositionX = currentPositionX % imageWidth;
+    }
+  }
+
+  double getWavelengthForPolynomial(int posX, List spectrumBounds){
+    List relativeBounds = getBoundsForPolynomial(spectrumBounds[2], spectrumBounds[3]);
+    double relativeRelativePosition = (posX - spectrumBounds[0])/(spectrumBounds[1] - spectrumBounds[0]);
+    double relativePosition = relativeBounds[0] + relativeRelativePosition * (relativeBounds[1] - relativeBounds[0]);
+    double wavelength = 0;
+    for(double coefficient in relativePosToWavelengthFunctionCoefficients.reversed){
+      wavelength *= relativePosition;
+      wavelength += coefficient;
+    }
+    return wavelength;
+  }
+
+  List<double> getBoundsForPolynomial(double startSpectrumWavelength, double endSpectrumWavelength){
+    double relativeStartPosition = 0;
+    double relativeEndPosition = 0;
+    for(double coefficient in inverseRelativePosToWavelengthFunctionCoefficients.reversed){
+      relativeStartPosition *= startSpectrumWavelength;
+      relativeEndPosition *= endSpectrumWavelength;
+      relativeStartPosition += coefficient;
+      relativeEndPosition += coefficient;
+    }
+    return [relativeStartPosition, relativeEndPosition];
+  }
+
+  chooseCoefficients(int grating){
+    switch(grating){
+      case 625: //CD
+        relativePosToWavelengthFunctionCoefficients = [399.99971260114154,331.63465261047116, -27.547973040830968, -5.454094494323559, 1.3680989208162249];
+        inverseRelativePosToWavelengthFunctionCoefficients = [-1.1047170070525247, 0.002506383433519993, 7.886494958025243e-07, -7.347700534902981e-10, 8.989102013574446e-13];
+        break;
+      case 1000:
+        relativePosToWavelengthFunctionCoefficients = [399.97981082771435, 419.2907842157629, -130.1861087421816, 3.9593131953818386, 6.980019941946402];
+        inverseRelativePosToWavelengthFunctionCoefficients = [-0.11410202388799878, -0.003961148427120149, 1.8491581827859126e-05, -2.5817708839387402e-08, 1.5331748498266344e-11];
+        break;
+      case 1350: //DVD
+        relativePosToWavelengthFunctionCoefficients = [400.35185888056503, 982.4786834945292,  -1494.966171082382, 1212.5356835609812, -401.72911625856375];
+        inverseRelativePosToWavelengthFunctionCoefficients = [21.824958958855525, -0.17582705733311732, 0.0005251492827328874, -6.915366563216458e-07, 3.4190944043013816e-10];
+        break;
+      default:
+        throw Exception("Grating not supported");
+        break;
+    }
   }
 
   void positionBasedLinearHSVToSpectrum(){
@@ -111,7 +195,7 @@ class Spectrum{
     double wavelengthIncreaseFactor = positionBasedWaveLengthIncreaseFactor(spectrumBounds);
 
     int currentPositionX = 0;
-    for(HSVPixel pixel in pixels){
+    for(HSVPixel pixel in hsvPixels){
       if(isPixelValid(pixel)){
         double wavelength = spectrumBounds[2] + (currentPositionX - spectrumBounds[0])*wavelengthIncreaseFactor;
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
@@ -119,7 +203,6 @@ class Spectrum{
       currentPositionX++;
       currentPositionX = currentPositionX % imageWidth;
     }
-    normalizeAndSampleSpectrumValues();
   }
 
   double positionBasedWaveLengthIncreaseFactor(List spectrumBounds){
@@ -133,7 +216,7 @@ class Spectrum{
     double firstLightWavelength = wavelengthMin.toDouble();
     double lastLightWavelength = wavelengthMax.toDouble();
 
-    for (HSVPixel pixel in pixels) {
+    for (HSVPixel pixel in hsvPixels) {
       if (isPixelValid(pixel)) {
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
@@ -157,7 +240,7 @@ class Spectrum{
     double firstLightWavelength = wavelengthMin.toDouble();
     double lastLightWavelength = wavelengthMax.toDouble();
 
-    for (HSVPixel pixel in pixels) {
+    for (HSVPixel pixel in hsvPixels) {
       if (isPixelValid(pixel) && (pixel.hue < HueConversionData.max || pixel.hue > HueConversionData.minFromOtherSide)) {
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
@@ -185,7 +268,7 @@ class Spectrum{
     double firstLightWavelength = wavelengthMin.toDouble();
     double lastLightWavelength = wavelengthMax.toDouble();
 
-    for (HSVPixel pixel in pixels) {
+    for (HSVPixel pixel in hsvPixels) {
       if (isPixelValidHighValue(pixel) && (pixel.hue < HueConversionData.max || pixel.hue > HueConversionData.minFromOtherSide)) {
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
@@ -213,7 +296,7 @@ class Spectrum{
     double firstLightWavelength = wavelengthMin.toDouble();
     double lastLightWavelength = wavelengthMax.toDouble();
 
-    for (HSVPixel pixel in pixels) {
+    for (HSVPixel pixel in hsvPixels) {
       if (isPixelValidHighValue(pixel) && (pixel.hue < HueConversionData.max || pixel.hue > HueConversionData.minFromOtherSide)) {
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
@@ -235,13 +318,12 @@ class Spectrum{
   }
 
   void linearHSVToSpectrum(){
-    for(HSVPixel pixel in pixels){
+    for(HSVPixel pixel in hsvPixels){
       if(isPixelValid(pixel)){
         double wavelength = linearHueToWavelength(pixel.hue);
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
       }
     }
-    normalizeAndSampleSpectrumValues();
   }
 
   bool isPixelValid(pixel){
@@ -290,14 +372,14 @@ class Spectrum{
 }
 
 enum Algorithm {
-  linear,
-  openstaxBased,
-  positionBasedLinear,
-  positionBasedWithOpenstax,
-  positionBasedWithHighValueControl,
-  positionBasedWithWiki
+  hsvLinear,
+  hsvOpenstaxBased,
+  hsvPositionBasedLinear,
+  hsvPositionBasedPolynomial,
+  hsvPositionBasedPolynomialWithOpenstax,
+  hsvPositionBasedWithOpenstax,
+  hsvPositionBasedWithHighValueControl,
+  hsvPositionBasedWithWiki,
+  rgbTest
 }
-
-
-
 
