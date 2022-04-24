@@ -14,6 +14,10 @@
   "crop_header": "Przytnij zdjęcie do analizy",
   "analysis_header": "Analiza zdjęcia",
   "analyzed_spectrum": "Analizowane spektrum",
+  "credits_header": "Autorzy",
+  "authors": "Autorzy",
+  "supervisors": "Opiekunowie projektu",
+  "special_thanks": "Specjalne podziękowania",
   "error_message": "Coś poszło nie tak",
   "retry": "Ponów",
   "next": "Kontynuuj"

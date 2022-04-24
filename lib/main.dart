@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'language_change.dart';
+import 'minor_pages/credits.dart';
 import 'new_ui_components.dart';
 import 'package:provider/provider.dart';
 
@@ -182,7 +183,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(child: Container()),
                   SquareButton(icon: Icons.language_outlined, label: AppLocalizations.of(context)!.website),
                   Expanded(child: Container()),
-                  SquareButton(icon: Icons.person_outline, label: AppLocalizations.of(context)!.credits)
+                  SquareButton(icon: Icons.person_outline, label: AppLocalizations.of(context)!.credits,
+                    onPressed: (){
+                    Navigator.push((context),
+                        MaterialPageRoute(builder:
+                            (context) => CreditsPage(),));
+                  },)
                 ]
               )
             )

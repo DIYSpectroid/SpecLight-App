@@ -59,6 +59,22 @@
     "@analyzed_spectrum": {
         "description": "Tooltip over photo which went through analysis"
     },
+    "credits_header": "Credits",
+    "@credits_header": {
+        "description": "Message on screen with credits appbar"
+    },
+    "authors": "Authors",
+    "@authors": {
+        "description": "Authors subsection in credits"
+    },
+    "supervisors": "Project supervisors",
+    "@supervisors": {
+        "description": "Supervisors subsection in credits"
+    },
+    "special_thanks": "Special thanks",
+    "@special_thanks": {
+        "description": "Special thanks subsection in credits"
+    },
     "error_message": "Something went wrong",
     "@error_message": {
         "description": "Generic error message"
