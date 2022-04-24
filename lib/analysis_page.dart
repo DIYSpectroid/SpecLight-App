@@ -17,10 +17,11 @@ final ImagePicker picker = ImagePicker();
 
 class AnalysisPage extends StatefulWidget{
 
-  const AnalysisPage({Key? key, required this.imageFilePath, required this.algorithm}) : super(key: key);
+  const AnalysisPage({Key? key, required this.imageFilePath, required this.algorithm, required this.grating}) : super(key: key);
 
   final String? imageFilePath;
   final Algorithm algorithm;
+  final Grating grating;
 
   @override
   State<AnalysisPage> createState() => _AnalysisPageState();
@@ -60,7 +61,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
     List<HSVPixel> hsvPixels =  await compute(ImageDataExtraction.convertBytesToHSV, rgba);
     List<RGBPixel> rgbPixels = await compute(ImageDataExtraction.convertBytesToRGB, rgba);
 
-    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, rgbPixels, widget.algorithm);
+    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, rgbPixels, widget.algorithm, widget.grating);
     return spectrum;
   }
 

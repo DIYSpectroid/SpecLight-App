@@ -25,7 +25,8 @@ class CropPhotoPage extends StatefulWidget{
 
 class _CropPhotoPageState extends State<CropPhotoPage> {
   File? croppedFile;
-  Algorithm algorithm = Algorithm.hsvPositionBasedLinear;
+  Algorithm algorithm = Algorithm.hsvPositionBasedPolynomial;
+  Grating grating = Grating.grating1000;
   late final Future<File>? temp = cropImage();
 
   Future<File> cropImage() async {
@@ -83,6 +84,19 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                               child: Text(classType.toString()));
                         }).toList()
                       ),
+                      DropdownButton<Grating>(
+                          value: grating,
+                          onChanged: (Grating? newValue) {
+                            setState(() {
+                              grating = newValue!;
+                            });
+                          },
+                          items: Grating.values.map((Grating classType) {
+                            return DropdownMenuItem<Grating>(
+                                value: classType,
+                                child: Text(classType.toString()));
+                          }).toList()
+                      ),
                       FittedBox(
                         fit: BoxFit.contain,
                         child: Image.file(File(snapshot.data!.path)),
@@ -111,7 +125,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                             onPressed: () {
                               Navigator.push((context),
                                   MaterialPageRoute(builder:
-                                      (context) => AnalysisPage(imageFilePath: snapshot.data!.path, algorithm: this.algorithm),));
+                                      (context) => AnalysisPage(imageFilePath: snapshot.data!.path, algorithm: this.algorithm, grating: this.grating,),));
                             },
                             icon: const Icon(Icons.verified_outlined, size: 18),
                             label: const Text("Continue"),

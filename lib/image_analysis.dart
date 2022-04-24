@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter/rendering.dart';
 import 'package:spectroid/image_analysis_rgb.dart';
 import 'package:spectroid/light_hue_conversion_extractor.dart';
 
@@ -29,8 +28,8 @@ class Spectrum{
     return spectrum.values.toList();
   }
 
-  Spectrum(this.hsvPixels, this.imageWidth, this.imageHeight, List<RGBPixel> rgbPixels, Algorithm algorithm){
-    chooseCoefficients(1000);
+  Spectrum(this.hsvPixels, this.imageWidth, this.imageHeight, List<RGBPixel> rgbPixels, Algorithm algorithm, Grating grating){
+    chooseCoefficients(grating);
     switch(algorithm){
       case Algorithm.hsvLinear:
         linearHSVToSpectrum();
@@ -120,11 +119,12 @@ class Spectrum{
 
   void hsvPositionBasedPolynomialWithOpenstax(){
     List spectrumBounds = getSpectrumBoundsWithOpenstax();
+    List relativeBounds = getBoundsForPolynomial(spectrumBounds[2], spectrumBounds[3]);
 
     int currentPositionX = 0;
     for(HSVPixel pixel in hsvPixels){
       if(isPixelValid(pixel)){
-        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBounds);
+        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBounds, relativeBounds);
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
       }
       currentPositionX++;
@@ -134,11 +134,12 @@ class Spectrum{
 
   void positionBasedPolynomialHSVToSpectrum(){
     List spectrumBounds = getSpectrumBoundsLinear();
-
+    List relativeBounds = getBoundsForPolynomial(spectrumBounds[2], spectrumBounds[3]);
+    print(spectrumBounds);
     int currentPositionX = 0;
     for(HSVPixel pixel in hsvPixels){
       if(isPixelValid(pixel)){
-        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBounds);
+        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBounds, relativeBounds);
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
       }
       currentPositionX++;
@@ -146,8 +147,7 @@ class Spectrum{
     }
   }
 
-  double getWavelengthForPolynomial(int posX, List spectrumBounds){
-    List relativeBounds = getBoundsForPolynomial(spectrumBounds[2], spectrumBounds[3]);
+  double getWavelengthForPolynomial(int posX, List spectrumBounds, List relativeBounds){
     double relativeRelativePosition = (posX - spectrumBounds[0])/(spectrumBounds[1] - spectrumBounds[0]);
     double relativePosition = relativeBounds[0] + relativeRelativePosition * (relativeBounds[1] - relativeBounds[0]);
     double wavelength = 0;
@@ -155,6 +155,7 @@ class Spectrum{
       wavelength *= relativePosition;
       wavelength += coefficient;
     }
+    // print("posX: ${posX} Wavelength: ${wavelength}");
     return wavelength;
   }
 
@@ -167,20 +168,21 @@ class Spectrum{
       relativeStartPosition += coefficient;
       relativeEndPosition += coefficient;
     }
+    print("Relative bounds ${[relativeStartPosition, relativeEndPosition]}");
     return [relativeStartPosition, relativeEndPosition];
   }
 
-  chooseCoefficients(int grating){
+  chooseCoefficients(Grating grating){
     switch(grating){
-      case 625: //CD
+      case Grating.grating625CD: //CD
         relativePosToWavelengthFunctionCoefficients = [399.99971260114154,331.63465261047116, -27.547973040830968, -5.454094494323559, 1.3680989208162249];
         inverseRelativePosToWavelengthFunctionCoefficients = [-1.1047170070525247, 0.002506383433519993, 7.886494958025243e-07, -7.347700534902981e-10, 8.989102013574446e-13];
         break;
-      case 1000:
+      case Grating.grating1000:
         relativePosToWavelengthFunctionCoefficients = [399.97981082771435, 419.2907842157629, -130.1861087421816, 3.9593131953818386, 6.980019941946402];
         inverseRelativePosToWavelengthFunctionCoefficients = [-0.11410202388799878, -0.003961148427120149, 1.8491581827859126e-05, -2.5817708839387402e-08, 1.5331748498266344e-11];
         break;
-      case 1350: //DVD
+      case Grating.grating1350DVD: //DVD
         relativePosToWavelengthFunctionCoefficients = [400.35185888056503, 982.4786834945292,  -1494.966171082382, 1212.5356835609812, -401.72911625856375];
         inverseRelativePosToWavelengthFunctionCoefficients = [21.824958958855525, -0.17582705733311732, 0.0005251492827328874, -6.915366563216458e-07, 3.4190944043013816e-10];
         break;
@@ -215,22 +217,41 @@ class Spectrum{
     int lastLightPositionX = 0;
     double firstLightWavelength = wavelengthMin.toDouble();
     double lastLightWavelength = wavelengthMax.toDouble();
+    int minimalAllowedX = 0;
+    int maximalAllowedX = imageWidth;
 
     for (HSVPixel pixel in hsvPixels) {
-      if (isPixelValid(pixel)) {
+      if (/*currentPositionX >= minimalAllowedX && currentPositionX <= maximalAllowedX && */isPixelValid(pixel)) {
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
         if(firstLightPositionX == currentPositionX){
-          firstLightWavelength = linearHueToWavelength(pixel.hue);
+          double wavelength = linearHueToWavelength(pixel.hue);
+          if(isPixelXYZRatioUnique(wavelength)){
+            firstLightWavelength = wavelength;
+          } else {
+            minimalAllowedX = currentPositionX;
+          }
+
         }
         if(lastLightPositionX == currentPositionX){
-          lastLightWavelength = linearHueToWavelength(pixel.hue);
+          double wavelength = linearHueToWavelength(pixel.hue);
+          if(isPixelXYZRatioUnique(wavelength)){
+            lastLightWavelength = wavelength;
+          } else {
+            maximalAllowedX = currentPositionX;
+          }
         }
       }
       currentPositionX++;
       currentPositionX = currentPositionX % imageWidth;
     }
     return [firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength];
+  }
+
+  bool isPixelXYZRatioUnique(double wavelength){
+    int uniquenessStart = 410;
+    int uniquenessEnd = 620;
+    return wavelength >= uniquenessStart && wavelength <= uniquenessEnd;
   }
 
   List getSpectrumBoundsWithOpenstax() {
@@ -381,5 +402,11 @@ enum Algorithm {
   hsvPositionBasedWithHighValueControl,
   hsvPositionBasedWithWiki,
   rgbTest
+}
+
+enum Grating {
+  grating1000,
+  grating625CD,
+  grating1350DVD
 }
 
