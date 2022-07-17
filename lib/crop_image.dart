@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'analysis_page.dart';
-import 'image_analysis.dart';
+import 'image_analysis/image_analysis.dart';
 
 final ImagePicker picker = ImagePicker();
 

@@ -1,15 +1,16 @@
 import 'dart:math';
-import 'package:spectroid/image_analysis_rgb.dart';
-import 'package:spectroid/light_hue_conversion_extractor.dart';
+import 'package:spectroid/image_analysis/data_extraction/light_hue_conversion_extractor.dart';
 
-import 'image_data_extraction.dart';
+import 'data_extraction/image_data.dart';
+import 'data_extraction/image_data_extraction.dart';
 
 class Spectrum{
   Map<double, double> spectrum = {};
-  List<HSVPixel> hsvPixels;
 
-  int imageWidth;
-  int imageHeight;
+  late List<HSVPixel> hsvPixels;
+  late int imageWidth;
+  late int imageHeight;
+
   late List<double> relativePosToWavelengthFunctionCoefficients;
   late List<double> inverseRelativePosToWavelengthFunctionCoefficients;
   static const int wavelengthMin = 400;
@@ -28,7 +29,10 @@ class Spectrum{
     return spectrum.values.toList();
   }
 
-  Spectrum(this.hsvPixels, this.imageWidth, this.imageHeight, List<RGBPixel> rgbPixels, Algorithm algorithm, Grating grating){
+  Spectrum(ImageData imageData, Algorithm algorithm, Grating grating){
+    hsvPixels = imageData.hsvPixels;
+    imageWidth = imageData.width;
+    imageHeight = imageData.height;
     chooseCoefficients(grating);
     switch(algorithm){
       case Algorithm.hsvLinear:
@@ -56,7 +60,7 @@ class Spectrum{
         positionBasedWithWiki();
         break;
       case Algorithm.rgbTest:
-        RGBAnalyser rgbAnalyser = RGBAnalyser(rgbPixels, this.imageWidth, this.imageHeight);
+        //RGBAnalyser rgbAnalyser = RGBAnalyser(rgbPixels, this.imageWidth, this.imageHeight);
         //spectrum = rgbAnalyser.rgbTest();
 
     }

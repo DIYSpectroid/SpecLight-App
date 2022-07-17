@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:spectroid/light_hue_conversion_extractor.dart';
+import 'package:spectroid/image_analysis/data_extraction/light_hue_conversion_extractor.dart';
 import 'choose_image.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

@@ -9,9 +9,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:spectroid/image_analysis.dart';
+import 'package:spectroid/image_analysis/image_analysis.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:spectroid/image_data_extraction.dart';
+import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
+
+import 'image_analysis/data_extraction/image_data.dart';
 
 
 final ImagePicker picker = ImagePicker();
@@ -33,11 +35,6 @@ class _AnalysisPageState extends State<AnalysisPage> {
   Future<ImageData>? imageData;
   File? imageFile;
 
-  Future<ImageData> analyzeImage() async {
-    imageData = ImageDataExtraction.getImageData(widget.imageFilePath!);
-    return imageData!;
-  }
-
   List<charts.Series<LinearData, double>> createPlotData(Spectrum spectrum) {
 
     List<LinearData> data = [];
@@ -57,12 +54,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
   }
 
   Future<Spectrum> getSpectrum() async{
-    ImageData imageData = await analyzeImage();
-    List<int> rgba = await compute(ImageDataExtraction.getRGBABytesFromABGRInts, imageData.bytes);
-    List<HSVPixel> hsvPixels =  await compute(ImageDataExtraction.convertBytesToHSV, rgba);
-    List<RGBPixel> rgbPixels = await compute(ImageDataExtraction.convertBytesToRGB, rgba);
+    ImageData imageData = await compute(ImageDataExtraction.getImageData, widget.imageFilePath!);
+    imageData.ExtractData();
 
-    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, rgbPixels, widget.algorithm, widget.grating);
+    Spectrum spectrum = Spectrum(imageData, widget.algorithm, widget.grating);
     return spectrum;
   }
 
