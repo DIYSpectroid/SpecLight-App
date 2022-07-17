@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -65,12 +66,28 @@ class _AnalysisPageState extends State<AnalysisPage> {
     return spectrum;
   }
 
+  double chosen_x = 0;
+  double chosen_y = 0;
+
+  _onSelectionChanged(charts.SelectionModel model){
+    final selectedDatum = model.selectedDatum;
+    double x = 0;
+    double y = 0;
+    print('test');
+    if (selectedDatum.isNotEmpty) {
+       x = selectedDatum.first.datum.x;
+       y = selectedDatum.last.datum.y;
+    }
+
+    setState(() {chosen_x = x; chosen_y = y;});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
 
-        title: const Text("Photo analysis"),
+        title: Text(AppLocalizations.of(context)!.analysis_header),
       ),
       body: Center(
         child:
@@ -88,6 +105,12 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     child: charts.LineChart(
                         seriesList,
                         animate: true,
+                        selectionModels: [
+                          new charts.SelectionModelConfig(
+                            type: charts.SelectionModelType.info,
+                            changedListener: _onSelectionChanged,
+                          )
+                        ],
                         domainAxis: const charts.NumericAxisSpec(
                           tickProviderSpec:
                             charts.BasicNumericTickProviderSpec(zeroBound: false),
@@ -105,7 +128,9 @@ class _AnalysisPageState extends State<AnalysisPage> {
                       ],
                     ),
                     Padding(padding: EdgeInsets.all(18.0)),
-                    Text("Analyzed spectrum", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text("Selected x: $chosen_x, selected y: $chosen_y"),
+                    Padding(padding: EdgeInsets.all(18.0)),
+                    Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
                     Padding(padding: EdgeInsets.all(4.0)),
                     Image.file(File(widget.imageFilePath!)),
                   ],
