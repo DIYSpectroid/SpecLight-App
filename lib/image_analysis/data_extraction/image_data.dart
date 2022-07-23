@@ -19,10 +19,7 @@ class ImageData{
   }
 }
 
-abstract class Pixel {
-}
-
-class HSVPixel extends Pixel{
+class HSVPixel {
   int hue;
   int saturation;
   int value;
@@ -30,7 +27,7 @@ class HSVPixel extends Pixel{
   HSVPixel(this.hue, this.saturation, this.value);
 }
 
-class RGBPixel extends Pixel{
+class RGBPixel{
   int red;
   int green;
   int blue;
