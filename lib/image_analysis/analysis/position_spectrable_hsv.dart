@@ -1,12 +1,13 @@
-import 'package:spectroid/image_analysis/algorithms/spectrable.dart';
-import 'package:spectroid/image_analysis/analysis/spectrable.dart';
+import 'dart:math';
+
+import 'package:spectroid/image_analysis/analysis/spectrable_hsv.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
 
-class PositionSpectrable extends Spectrable {
+class PositionSpectrableHSV extends SpectrableHSV {
 
-  PositionSpectrable(ImageData imageData) : super(imageData)
+  PositionSpectrableHSV(ImageData imageData) : super(imageData) {}
 
-  List getSpectrumBounds(int wavelengthMin, int wavelengthMax) {
+  SpectrumPositionBounds getSpectrumBounds() {
     int currentPositionX = 0;
     int firstLightPositionX = imageData.width;
     int lastLightPositionX = 0;
@@ -16,7 +17,7 @@ class PositionSpectrable extends Spectrable {
     int maximalAllowedX = imageData.width;
 
     for (HSVPixel pixel in imageData.hsvPixels) {
-      if (/*currentPositionX >= minimalAllowedX && currentPositionX <= maximalAllowedX && */isPixelValid(pixel)) {
+      if (/*currentPositionX >= minimalAllowedX && currentPositionX <= maximalAllowedX && */isHSVPixelValid(pixel)) {
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
         if(firstLightPositionX == currentPositionX){
@@ -38,8 +39,17 @@ class PositionSpectrable extends Spectrable {
         }
       }
       currentPositionX++;
-      currentPositionX = currentPositionX % imageWidth;
+      currentPositionX = currentPositionX % imageData.width;
     }
-    return [firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength];
+    return SpectrumPositionBounds(firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength);
   }
+}
+
+class SpectrumPositionBounds {
+  int firstLightX;
+  int lastLightX;
+  double firstLightWavelength;
+  double lastLightWavelength;
+
+  SpectrumPositionBounds(this.firstLightX, this.lastLightX, this.firstLightWavelength, this.lastLightWavelength);
 }

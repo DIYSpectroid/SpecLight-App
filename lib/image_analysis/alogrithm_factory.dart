@@ -1,8 +1,10 @@
-import 'package:spectroid/image_analysis/algorithms/spectrable.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
 
+import 'analysis/algorithms/hsv_position_polynomial.dart';
+import 'analysis/spectrable.dart';
+
 class AlgorithmFactory {
-  Algorithm algorithm = Algorithm.hsvPositionLinear;
+  Algorithm algorithm = Algorithm.hsvPositionPolynomial;
   Grating grating = Grating.grating1000;
   ImageData? imageData = null;
 
@@ -22,25 +24,26 @@ class AlgorithmFactory {
     return this;
   }
 
-  ISpectrable? create()  {
+  Spectrable? create()  {
     if(imageData == null) throw Exception("You must set imageData!");
     switch(algorithm){
-      case Algorithm.hsvPositionLinear:
-        return positionBasedLinearHSVToSpectrum();
+      // case Algorithm.hsvPositionLinear:
+      //   return positionBasedLinearHSVToSpectrum();
       case Algorithm.hsvPositionPolynomial:
-        return positionBasedPolynomialHSVToSpectrum();
-      case Algorithm.hsvPositionPolynomialWithOpenstax:
-        return hsvPositionBasedPolynomialWithOpenstax();
-      case Algorithm.hsvPositionWithHighValueControl:
-        return positionBasedWithHighValueControl();
-      case Algorithm.rgbTest:
-        return null;
+        var functionsCoefficients = chooseCoefficients();
+        return HSVPositionPolynomial(functionsCoefficients.first, functionsCoefficients.last, imageData!);
+      // case Algorithm.hsvPositionPolynomialWithOpenstax:
+      //   return hsvPositionBasedPolynomialWithOpenstax();
+      // case Algorithm.hsvPositionWithHighValueControl:
+      //   return positionBasedWithHighValueControl();
+      // case Algorithm.rgbTest:
+      //   return null;
       default:
         return null;
     }
   }
 
-  Set<List<double>> chooseCoefficients(Grating grating){
+  Set<List<double>> chooseCoefficients(){
     var relativePosToWavelengthFunctionCoefficients, inverseRelativePosToWavelengthFunctionCoefficients;
     switch(grating){
       case Grating.grating625CD: //CD
@@ -57,18 +60,17 @@ class AlgorithmFactory {
         break;
       default:
         throw Exception("Grating not supported");
-        break;
     }
     return {relativePosToWavelengthFunctionCoefficients, inverseRelativePosToWavelengthFunctionCoefficients};
   }
 }
 
 enum Algorithm {
-  hsvPositionLinear,
+  // hsvPositionLinear,
   hsvPositionPolynomial,
-  hsvPositionPolynomialWithOpenstax,
-  hsvPositionWithHighValueControl,
-  rgbTest
+  // hsvPositionPolynomialWithOpenstax,
+  // hsvPositionWithHighValueControl,
+  // rgbTest
 }
 
 enum Grating {

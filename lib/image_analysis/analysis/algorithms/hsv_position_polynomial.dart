@@ -1,28 +1,32 @@
+import 'package:spectroid/image_analysis/analysis/position_spectrable_hsv.dart';
+import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
 
+import '../polynomial_position_spectrable_hsv.dart';
 
-import 'package:spectroid/image_analysis/analysis/hsv_pixel_analyzer.dart';
+class HSVPositionPolynomial extends PolynomialPositionSpectrableHSV  {
 
-import '../polynomial_position_spectrable.dart';
+  HSVPositionPolynomial(List<double> relativePosToWavelengthFunctionCoefficients,
+      List<double> inverseRelativePosToWavelengthFunctionCoefficients,
+      ImageData imageData)
+      : super(relativePosToWavelengthFunctionCoefficients, inverseRelativePosToWavelengthFunctionCoefficients, imageData);
 
-class HSVPositionPolynomial extends PolynomialPositionSpectrable  {
-  HSVPixelAnalyzer hsvPixelAnalyzer;
+  void generateSpectrum(){
+    SpectrumPositionBounds spectrumBounds = getSpectrumBounds();
+    print("${spectrumBounds.firstLightX}, ${spectrumBounds.lastLightX}, ${spectrumBounds.firstLightWavelength}, ${spectrumBounds.lastLightWavelength}");
 
-  HSVPositionPolynomial(this.hsvPixelAnalyzer, List<double> relativePosToWavelengthFunctionCoefficients, List<double> inverseRelativePosToWavelengthFunctionCoefficients) : super(relativePosToWavelengthFunctionCoefficients, inverseRelativePosToWavelengthFunctionCoefficients);
-
-
-  void GenerateSpectrum(){
-    List spectrumBounds = getSpectrumBoundsLinear();
-    List relativeBounds = getBoundsForPolynomial(spectrumBounds[2], spectrumBounds[3]);
-    print(spectrumBounds);
+    SpectrumPositionBounds spectrumBoundsForPolynomial = getBoundsForPolynomial(spectrumBounds);
+    print("${spectrumBoundsForPolynomial.firstLightX}, ${spectrumBoundsForPolynomial.lastLightX}, ${spectrumBoundsForPolynomial.firstLightWavelength}, ${spectrumBoundsForPolynomial.lastLightWavelength}");
     int currentPositionX = 0;
-    for(HSVPixel pixel in hsvPixels){
-      if(isPixelValid(pixel)){
-        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBounds, relativeBounds);
+    for(HSVPixel pixel in imageData.hsvPixels){
+      if(isHSVPixelValid(pixel)){
+        double wavelength = getWavelengthForPolynomial(currentPositionX, spectrumBoundsForPolynomial);
         updateSpectrumSumOfValueOverSaturation(wavelength, pixel);
       }
       currentPositionX++;
-      currentPositionX = currentPositionX % imageWidth;
+      currentPositionX = currentPositionX % imageData.width;
     }
+    normalizeAndSampleSpectrumValues();
   }
+
 
 }

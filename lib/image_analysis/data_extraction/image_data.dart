@@ -12,7 +12,7 @@ class ImageData{
 
   ImageData(this.filepath, this.bytes, this.height, this.width);
 
-  Future<void> ExtractData() async {
+  Future<void> extractData() async {
     List<int> rgba = await compute(ImageDataExtraction.getRGBABytesFromABGRInts, bytes);
     hsvPixels = await compute(ImageDataExtraction.convertBytesToHSV, rgba);
     rgbPixels = await compute(ImageDataExtraction.convertBytesToRGB, rgba);

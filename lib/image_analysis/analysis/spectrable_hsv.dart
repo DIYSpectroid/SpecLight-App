@@ -1,21 +1,20 @@
+import 'dart:math';
+
+import 'package:spectroid/image_analysis/analysis/spectrable.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
 
-class HSVPixelAnalyzer {
-  int wavelengthMin = 400;
-  int wavelengthMax = 700;
+class SpectrableHSV extends Spectrable {
+
   int upperHueBound = 270;
   int lowerHueBound = -6;
-  int minSaturation = 7;
-  int minValue = 15;
-  int highMinValue = 80;
 
-  HSVPixelAnalyzer();
+  SpectrableHSV(ImageData imageData): super(imageData);
 
-  bool isPixelValid(pixel){
+  bool isHSVPixelValid(pixel){
     return getRelativeHue(pixel.hue) <= upperHueBound - lowerHueBound && pixel.saturation > minSaturation && pixel.value > minValue;
   }
 
-  bool isPixelValidHighValue(pixel){
+  bool isHSVPixelValidHighValue(pixel){
     return getRelativeHue(pixel.hue) <= upperHueBound - lowerHueBound && pixel.saturation > minSaturation && pixel.value > highMinValue;
   }
 
@@ -27,7 +26,7 @@ class HSVPixelAnalyzer {
     return wavelengthMax - getRelativeHue(hue)*(wavelengthMax-wavelengthMin)/(upperHueBound - lowerHueBound);
   }
 
-  void updateSpectrumSumOfValueOverSaturation(Map<double, double> spectrum, double wavelength, HSVPixel pixel){
+  void updateSpectrumSumOfValueOverSaturation(double wavelength, HSVPixel pixel){
     if(spectrum[wavelength] == null){
       spectrum[wavelength] = 0;
     }

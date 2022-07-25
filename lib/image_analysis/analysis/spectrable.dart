@@ -2,15 +2,31 @@ import 'dart:math';
 
 import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
 
+class SpectrablesMetadata{
+  static const int WAVELENGTH_MIN = 400;
+  static const int WAVELENGTH_MAX = 700;
+}
+
 class Spectrable {
   Map<double, double> spectrum = {};
   ImageData imageData;
 
-  Spectrable(this.imageData);
-  void GenerateSpectrum() {}
+  int wavelengthMin = SpectrablesMetadata.WAVELENGTH_MIN;
+  int wavelengthMax = SpectrablesMetadata.WAVELENGTH_MAX;
+  int minSaturation = 7;
+  int minValue = 15;
+  int highMinValue = 80;
 
+  Spectrable(this.imageData){}
+  void generateSpectrum() {}
 
-  void normalizeAndSampleSpectrumValues(int wavelengthMin, int wavelengthMax){
+  bool isPixelXYZRatioUnique(double wavelength){
+    int uniquenessStart = 410;
+    int uniquenessEnd = 620;
+    return wavelength >= uniquenessStart && wavelength <= uniquenessEnd;
+  }
+
+  void normalizeAndSampleSpectrumValues(){
     double maxValue = spectrum.values.reduce(max);
     for(double wavelength in spectrum.keys){
       spectrum[wavelength] = spectrum[wavelength]!*100/maxValue;

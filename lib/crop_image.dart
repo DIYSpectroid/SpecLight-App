@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'analysis_page.dart';
-import 'image_analysis/image_analysis.dart';
+import 'image_analysis/alogrithm_factory.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -26,7 +26,7 @@ class CropPhotoPage extends StatefulWidget{
 
 class _CropPhotoPageState extends State<CropPhotoPage> {
   File? croppedFile;
-  Algorithm algorithm = Algorithm.hsvPositionBasedPolynomial;
+  Algorithm algorithm = Algorithm.hsvPositionPolynomial;
   Grating grating = Grating.grating1000;
   late final Future<File>? temp = cropImage();
 
