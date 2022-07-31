@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -143,14 +145,16 @@ class BottomTab extends StatefulWidget {
 
   final IconData icon;
   final String label;
-  final bool selected;
+  final int id;
+  ValueNotifier<int> currentID;
   final Color color;
   //final double size;
 
   BottomTab({
     required this.icon,
     required this.label,
-    required this.selected,
+    required this.id,
+    required this.currentID,
     required this.color
     //this.size = 60
   });
@@ -168,15 +172,24 @@ class _BottomTabState extends State<BottomTab> {
       child: Material(
         color: widget.color,
          child: InkWell(
-            child: Column(
-              children: [
-                Padding(padding: EdgeInsets.only(bottom: 7.0)),
-                Icon(widget.icon, color: widget.selected ? Colors.white : Colors.white60, size: 24),
-                Padding(padding: EdgeInsets.only(bottom: 2.0)),
-                Text(widget.label, style: TextStyle(color: widget.selected ? Colors.white : Colors.white60, fontSize: 12),),
-              ]
-            ),
-          onTap: (){},
+            child: ValueListenableBuilder<int>(
+              valueListenable: widget.currentID,
+              builder: (context, value, _){
+                return Column(
+                  children: [
+                    Padding(padding: EdgeInsets.only(bottom: 7.0)),
+                    Icon(widget.icon, color: widget.id == value ? Colors.white : Colors.white60, size: 24),
+                    Padding(padding: EdgeInsets.only(bottom: 2.0)),
+                    Text(widget.label, style: TextStyle(color: widget.id == value ? Colors.white : Colors.white60, fontSize: 12),),
+                  ]
+                );
+            }
+           ),
+          onTap: (){
+              setState(() {
+                widget.currentID.value = widget.id;
+              });
+          },
         )
       )
     );

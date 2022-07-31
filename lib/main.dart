@@ -138,6 +138,7 @@ class _CameraPage extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
+    ValueNotifier<int> chooseID = ValueNotifier<int>(0);
 
     return Scaffold(
       appBar: AppBar(
@@ -209,11 +210,11 @@ class _CameraPage extends State<CameraPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                BottomTab(icon: Icons.show_chart, label: "Analysis", selected: true, color: Theme.of(context).primaryColor),
-                BottomTab(icon: Icons.photo_library, label: "Examples", selected: false, color: Theme.of(context).primaryColor),
+                BottomTab(icon: Icons.show_chart, label: "Analysis", color: Theme.of(context).primaryColor, id: 0, currentID: chooseID),
+                BottomTab(icon: Icons.photo_library, label: "Examples", color: Theme.of(context).primaryColor, id: 1, currentID: chooseID),
                 SizedBox(width: 50), // The dummy child
-                BottomTab(icon: Icons.more_horiz, label: "Resources", selected: false, color: Theme.of(context).primaryColor),
-                BottomTab(icon: Icons.settings, label: "Settings", selected: false, color: Theme.of(context).primaryColor),
+                BottomTab(icon: Icons.more_horiz, label: "Resources", color: Theme.of(context).primaryColor, id: 2, currentID: chooseID),
+                BottomTab(icon: Icons.settings, label: "Settings", color: Theme.of(context).primaryColor, id: 3, currentID: chooseID),
               ],
             ),
           )),
