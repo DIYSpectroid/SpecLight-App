@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:spectroid/crop_image.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'camera_page.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -32,12 +31,10 @@ class _ChoosePhotoPageState extends State<ChoosePhotoPage> {
       return await picker.pickImage(source: ImageSource.gallery);
     }
     else {
-      WidgetsFlutterBinding.ensureInitialized();
-      final cameras = await availableCameras();
-      final CameraDescription firstCamera = cameras.first;
-      return await Navigator.push((context),
+
+      /*return await Navigator.push((context),
           MaterialPageRoute(builder:
-              (context) => CameraPage(camera: firstCamera),));
+              (context) => CameraPage(camera: firstCamera),));*/
     }
   }
 

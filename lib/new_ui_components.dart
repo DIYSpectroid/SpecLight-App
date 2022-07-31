@@ -138,3 +138,47 @@ class SquareButton extends StatelessWidget {
     );
   }
 }
+
+class BottomTab extends StatefulWidget {
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final Color color;
+  //final double size;
+
+  BottomTab({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.color
+    //this.size = 60
+  });
+
+  @override
+  State<StatefulWidget> createState() {
+    return _BottomTabState();
+  }
+}
+
+class _BottomTabState extends State<BottomTab> {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Material(
+        color: widget.color,
+         child: InkWell(
+            child: Column(
+              children: [
+                Padding(padding: EdgeInsets.only(bottom: 7.0)),
+                Icon(widget.icon, color: widget.selected ? Colors.white : Colors.white60, size: 24),
+                Padding(padding: EdgeInsets.only(bottom: 2.0)),
+                Text(widget.label, style: TextStyle(color: widget.selected ? Colors.white : Colors.white60, fontSize: 12),),
+              ]
+            ),
+          onTap: (){},
+        )
+      )
+    );
+  }
+}

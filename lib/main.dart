@@ -1,17 +1,25 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/light_hue_conversion_extractor.dart';
+import 'package:spectroid/rhombus.dart';
 import 'choose_image.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'crop_image.dart';
 import 'language_change.dart';
 import 'minor_pages/credits.dart';
 import 'new_ui_components.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  final cameras = await availableCameras();
+  CameraDescription firstCamera = cameras.first;
+  runApp(MyApp(camera: firstCamera));
   HueConversionData.initialize(false);
   HueConversionData.initialize(true);
 }
@@ -37,8 +45,9 @@ MaterialColor buildMaterialColor(Color color) {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.camera}) : super(key: key);
 
+  final CameraDescription camera;
 
 
   // This widget is the root of your application.
@@ -62,9 +71,13 @@ class MyApp extends StatelessWidget {
               locale: locale.locale, // NEW
               title: 'Flutter Demo',
               theme: ThemeData(
-                primarySwatch: buildMaterialColor(Color(0xFFD2D0E7)),
+                primarySwatch: buildMaterialColor(Color(0xFFFA7921)),
+                accentColor: buildMaterialColor(Color(0xFFF2AF29)),
+                textTheme: TextTheme(
+                  headline6: TextStyle(color: Colors.white),
+                )
               ),
-              home: MyHomePage(title: 'SPECLIGHT App'),
+              home: CameraPage(camera: camera),
             );
           }
       ),
@@ -72,31 +85,35 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class CameraPage extends StatefulWidget {
+  const CameraPage({Key? key, required this.camera}) : super(key: key);
+  final CameraDescription camera;
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CameraPage> createState() => _CameraPage();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _CameraPage extends State<CameraPage> {
 
+  late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
 
   @override
   void initState() {
     super.initState();
     _loadLanguage();
+    // To display the current output from the Camera,
+    // create a CameraController.
+    _controller = CameraController(
+      // Get a specific camera from the list of available cameras.
+      widget.camera,
+      // Define the resolution to use.
+      ResolutionPreset.high,
+      enableAudio: false,
+    );
+
+    // Next, initialize the controller. This returns a Future.
+    _initializeControllerFuture = _controller.initialize();
+    _controller.lockCaptureOrientation();
   }
 
 
@@ -113,89 +130,93 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void dispose() {
+    // Dispose of the controller when the widget is disposed.
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-
-
-    const double spacing = 12;
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title, style: TextStyle(fontFamily: 'Proxy', fontSize: 28)),
+        title: Text(AppLocalizations.of(context)!.choose_header, style: Theme.of(context).textTheme.headline6,),
+        actions: [
+          IconButton(onPressed: (){}, icon: Icon(Icons.photo_library, color: Colors.white))
+        ],
       ),
       body: Center(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(40, spacing * 4, 40, 0),
-          children: <Widget>[
-            MenuButton(
-              icon: Icons.camera_alt,
-              label: AppLocalizations.of(context)!.take_analysis,
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: true),));
-              },
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.folder_outlined,
-              label: AppLocalizations.of(context)!.send_analysis,
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: false),));
+        child: Stack(children: <Widget>
+        [
+          SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: FutureBuilder<void>(
+                future: _initializeControllerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    // If the Future is complete, display the preview.
+                    return CameraPreview(_controller);
+                  }
+                  else if(snapshot.hasError){
+                    return Text(AppLocalizations.of(context)!.error_message);
+                  }
+                  else {
+                    // Otherwise, display a loading indicator.
+                    return const Center(child: CircularProgressIndicator());
+                  }
                 },
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.ondemand_video_outlined,
-              label: AppLocalizations.of(context)!.instruction,
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.help_outline,
-              label: AppLocalizations.of(context)!.help,
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.insert_photo_outlined,
-              label: AppLocalizations.of(context)!.examples,
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing * 4)),
-            MenuButton(
-              icon: Icons.share_outlined,
-              label: AppLocalizations.of(context)!.share,
-              color: Color(0x1AE75EA0),
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            SizedBox(
-              child: Row(
-                children:[
-                  SquareButton(icon: Icons.settings_outlined, label: AppLocalizations.of(context)!.settings, onPressed: (){
-                    Navigator.push((context),
-                        MaterialPageRoute(builder:
-                            (context) => LanguageChange()));
-                  }),
-                  Expanded(child: Container()),
-                  SquareButton(icon: Icons.language_outlined, label: AppLocalizations.of(context)!.website),
-                  Expanded(child: Container()),
-                  SquareButton(icon: Icons.person_outline, label: AppLocalizations.of(context)!.credits,
-                    onPressed: (){
-                    Navigator.push((context),
-                        MaterialPageRoute(builder:
-                            (context) => CreditsPage(),));
-                  },)
-                ]
               )
-            )
-
-          ]
-        )
+          ),
+        ]
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Transform.scale(
+        scale: 1.2,
+        child: FloatingActionButton(
+          // Provide an onPressed callback.
+          onPressed: () async {
+            // Take the Picture in a try / catch block. If anything goes wrong,
+            // catch the error.
+            try {
+              // Ensure that the camera is initialized.
+              await _initializeControllerFuture;
+              _controller.setFlashMode(FlashMode.off);
+              await _controller.lockCaptureOrientation();
+              // Attempt to take a picture and then get the location
+              // where the image file is saved.
+              final image = await _controller.takePicture();
+              await Navigator.push((context),
+                  MaterialPageRoute(builder:
+                      (context) => CropPhotoPage(imageFile: File(image.path)),));
+            } catch (e) {
+              // If an error occurs, log the error to the console.
+              print(e);
+            }
+          },
+          child: const Icon(Icons.camera_alt, color: Colors.white),
+          shape: Rhombus(),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+          shape: CircularNotchedRectangle(),
+          notchMargin: 2.0,
+          child: Container(
+            color: Theme.of(context).primaryColor,
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                BottomTab(icon: Icons.show_chart, label: "Analysis", selected: true, color: Theme.of(context).primaryColor),
+                BottomTab(icon: Icons.photo_library, label: "Examples", selected: false, color: Theme.of(context).primaryColor),
+                SizedBox(width: 50), // The dummy child
+                BottomTab(icon: Icons.more_horiz, label: "Resources", selected: false, color: Theme.of(context).primaryColor),
+                BottomTab(icon: Icons.settings, label: "Settings", selected: false, color: Theme.of(context).primaryColor),
+              ],
+            ),
+          )),
     );
   }
 }
