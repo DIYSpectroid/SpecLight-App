@@ -148,15 +148,15 @@ class BottomTab extends StatefulWidget {
   final int id;
   ValueNotifier<int> currentID;
   final Color color;
-  //final double size;
+  final void Function()? onPressed;
 
   BottomTab({
     required this.icon,
     required this.label,
     required this.id,
     required this.currentID,
-    required this.color
-    //this.size = 60
+    required this.color,
+    this.onPressed
   });
 
   @override
@@ -186,6 +186,9 @@ class _BottomTabState extends State<BottomTab> {
             }
            ),
           onTap: (){
+              if(widget.onPressed != null && widget.currentID.value != widget.id){
+                widget.onPressed!();
+              }
               setState(() {
                 widget.currentID.value = widget.id;
               });

@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
                   headline6: TextStyle(color: Colors.white),
                 )
               ),
-              home: CameraPage(camera: camera),
+              home: MainPage(camera: camera, chooseID: ValueNotifier<int>(0)),
             );
           }
       ),
@@ -85,9 +85,42 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class CameraPage extends StatefulWidget {
-  const CameraPage({Key? key, required this.camera}) : super(key: key);
+class MainPage extends StatefulWidget {
+  MainPage({Key? key, required this.camera, required this.chooseID}) : super(key: key);
   final CameraDescription camera;
+  ValueNotifier<int> chooseID ;
+  @override
+  State<MainPage> createState() => _MainPage();
+}
+
+class _MainPage extends State<MainPage> {
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        body: ValueListenableBuilder<int>(
+          valueListenable: widget.chooseID,
+          builder: (context, value, _) {
+            return IndexedStack(
+                index: value,
+                children: [
+                  CameraPage(camera: widget.camera, chooseID: widget.chooseID),
+                  LanguageChange(chooseID: widget.chooseID),
+                  LanguageChange(chooseID: widget.chooseID),
+                  LanguageChange(chooseID: widget.chooseID)
+                ]
+            );
+          })
+      );
+    }
+
+}
+
+class CameraPage extends StatefulWidget {
+
+  const CameraPage({Key? key, required this.camera, required this.chooseID}) : super(key: key);
+  final CameraDescription camera;
+  final ValueNotifier<int> chooseID;
   @override
   State<CameraPage> createState() => _CameraPage();
 }
@@ -138,7 +171,7 @@ class _CameraPage extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<int> chooseID = ValueNotifier<int>(0);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -205,16 +238,42 @@ class _CameraPage extends State<CameraPage> {
           shape: CircularNotchedRectangle(),
           notchMargin: 2.0,
           child: Container(
-            color: Theme.of(context).primaryColor,
+            color: Theme
+                .of(context)
+                .primaryColor,
             height: 56,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                BottomTab(icon: Icons.show_chart, label: "Analysis", color: Theme.of(context).primaryColor, id: 0, currentID: chooseID),
-                BottomTab(icon: Icons.photo_library, label: "Examples", color: Theme.of(context).primaryColor, id: 1, currentID: chooseID),
+                BottomTab(icon: Icons.show_chart,
+                    label: AppLocalizations.of(context)!.analysis_header,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 0,
+                    currentID: widget.chooseID),
+                BottomTab(icon: Icons.photo_library,
+                    label: AppLocalizations.of(context)!.examples,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 1,
+                    currentID: widget.chooseID),
                 SizedBox(width: 50), // The dummy child
-                BottomTab(icon: Icons.more_horiz, label: "Resources", color: Theme.of(context).primaryColor, id: 2, currentID: chooseID),
-                BottomTab(icon: Icons.settings, label: "Settings", color: Theme.of(context).primaryColor, id: 3, currentID: chooseID),
+                BottomTab(icon: Icons.more_horiz,
+                    label: AppLocalizations.of(context)!.resources,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 2,
+                    currentID: widget.chooseID),
+                BottomTab(icon: Icons.settings,
+                    label: AppLocalizations.of(context)!.settings,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 3,
+                    currentID: widget.chooseID),
               ],
             ),
           )),

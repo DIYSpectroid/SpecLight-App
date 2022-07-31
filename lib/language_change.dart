@@ -18,39 +18,45 @@ class AppLocale extends ChangeNotifier {
 }
 
 class LanguageChange extends StatelessWidget {
+  LanguageChange({Key? key, required this.chooseID}) : super(key: key);
+  ValueNotifier<int> chooseID;
+
   @override
   Widget build(BuildContext context) {
-
-    void _setLanguage (String language) async{
+    void _setLanguage(String language) async {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('language', language);
     }
-
 
     var language = Provider.of<AppLocale>(context);
     const double spacing = 12;
 
     return Scaffold(
-        appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.choose_language, style: TextStyle(fontFamily: 'Proxy', fontSize: 28)),
-            centerTitle: true,
-        ),
-
-        body: Center(
-          child: ListView(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.choose_language,
+            style: TextStyle(color: Colors.white)),
+      ),
+      body: Center(
+        child: ListView(
             shrinkWrap: true,
             padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
             children: [
               ImageButton(
                 imagePath: "assets/united kingdom.png",
                 label: "English",
-                onPressed: (){language.changeLocale(Locale('en')); _setLanguage('en');},
+                onPressed: () {
+                  language.changeLocale(Locale('en'));
+                  _setLanguage('en');
+                },
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
                 imagePath: "assets/poland.png",
                 label: "Polski",
-                onPressed: (){language.changeLocale(Locale('pl')); _setLanguage('pl');},
+                onPressed: () {
+                  language.changeLocale(Locale('pl'));
+                  _setLanguage('pl');
+                },
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
@@ -72,9 +78,49 @@ class LanguageChange extends StatelessWidget {
                 imagePath: "assets/china.png",
                 label: "中文",
               ),
-          ]
-          ),
-        )
+            ]),
+      ),
+      bottomNavigationBar: BottomAppBar(
+          shape: CircularNotchedRectangle(),
+          notchMargin: 2.0,
+          child: Container(
+            color: Theme.of(context).primaryColor,
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                BottomTab(icon: Icons.show_chart,
+                    label: AppLocalizations.of(context)!.analysis_header,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 0,
+                    currentID: chooseID),
+                BottomTab(icon: Icons.photo_library,
+                    label: AppLocalizations.of(context)!.examples,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 1,
+                    currentID: chooseID),
+                SizedBox(width: 50), // The dummy child
+                BottomTab(icon: Icons.more_horiz,
+                    label: AppLocalizations.of(context)!.resources,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 2,
+                    currentID: chooseID),
+                BottomTab(icon: Icons.settings,
+                    label: AppLocalizations.of(context)!.settings,
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    id: 3,
+                    currentID: chooseID),
+              ],
+            ),
+          )),
     );
   }
 }

@@ -51,7 +51,7 @@
     "@crop_header": {
         "description": "Message on photo cropping screen appbar"
     },
-    "analysis_header": "Photo analysis",
+    "analysis_header": "Analysis",
     "@analysis_header": {
         "description": "Message on screen with analysis result appbar"
     },
@@ -86,5 +86,9 @@
     "next": "Continue",
     "@next": {
         "description": "Generic continue button"
+    },
+    "resources": "Resources",
+    "@resources": {
+        "description": "Button leading to section with additional resources for user"
     }
 }

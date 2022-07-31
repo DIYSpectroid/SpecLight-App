@@ -12,7 +12,7 @@
   "camera_header": "Aparat",
   "choose_header": "Wybierz zdjęcie do analizy",
   "crop_header": "Przytnij zdjęcie do analizy",
-  "analysis_header": "Analiza zdjęcia",
+  "analysis_header": "Analiza",
   "analyzed_spectrum": "Analizowane spektrum",
   "credits_header": "Autorzy",
   "authors": "Autorzy",
@@ -20,5 +20,6 @@
   "special_thanks": "Specjalne podziękowania",
   "error_message": "Coś poszło nie tak",
   "retry": "Ponów",
-  "next": "Kontynuuj"
+  "next": "Kontynuuj",
+  "resources": "Zasoby"
 }
