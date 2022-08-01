@@ -48,6 +48,7 @@ class LanguageChange extends StatelessWidget {
                   language.changeLocale(Locale('en'));
                   _setLanguage('en');
                 },
+                imageSize: 35,
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
@@ -57,26 +58,31 @@ class LanguageChange extends StatelessWidget {
                   language.changeLocale(Locale('pl'));
                   _setLanguage('pl');
                 },
+                imageSize: 35,
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
                 imagePath: "assets/ukraine.png",
                 label: "Український",
+                imageSize: 35,
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
                 imagePath: "assets/germany.png",
                 label: "Deutsch",
+                imageSize: 35,
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
                 imagePath: "assets/france.png",
                 label: "Français",
+                imageSize: 35,
               ),
               Padding(padding: EdgeInsets.all(spacing)),
               ImageButton(
                 imagePath: "assets/china.png",
                 label: "中文",
+                imageSize: 35,
               ),
             ]),
       ),

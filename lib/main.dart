@@ -71,8 +71,9 @@ class MyApp extends StatelessWidget {
                 primarySwatch: buildMaterialColor(Color(0xFFFA7921)),
                 accentColor: buildMaterialColor(Color(0xFFF2AF29)),
                 textTheme: TextTheme(
-                  headline6: TextStyle(color: Colors.white),
-                )
+                  bodyText1: TextStyle(color: Colors.black, fontSize: 16),
+                  headline6: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               ),
               home: MainPage(camera: camera, chooseID: ValueNotifier<int>(0)),
             );
