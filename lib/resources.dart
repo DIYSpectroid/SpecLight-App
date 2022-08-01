@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'new_ui_components.dart';
 
 class ResorcesPage extends StatelessWidget {
   ResorcesPage({Key? key, required this.chooseID}) : super(key: key);
   ValueNotifier<int> chooseID;
+  LaunchMode launchMode = LaunchMode.externalApplication;
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +22,20 @@ class ResorcesPage extends StatelessWidget {
         children: [
           Padding(padding: EdgeInsets.only(bottom: 20.0)),
           Text(
-            "Website:",
+            AppLocalizations.of(context)!.website,
             style: Theme.of(context).textTheme.bodyText1,
           ),
           SizedBox(
             height: 36,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () async{
+                Uri url = Uri.parse("http://hexa.fis.agh.edu.pl/speclight-app/");
+                if(await canLaunchUrl(url)){
+                  await launchUrl(url, mode: launchMode);
+                }else {
+                  throw 'Could not launch $url';
+                }
+              },
               child: Align(
                   child: Text("http://hexa.fis.agh.edu.pl/speclight-app/",
                       style: TextStyle(
@@ -39,12 +48,19 @@ class ResorcesPage extends StatelessWidget {
             ),
           ),
           Padding(padding: EdgeInsets.only(bottom: 14.0)),
-          Text("YouTube channel with videotutorials:",
+          Text(AppLocalizations.of(context)!.youtube,
               style: Theme.of(context).textTheme.bodyText1),
           SizedBox(
             height: 36,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () async{
+                Uri url = Uri.parse("http://hexa.fis.agh.edu.pl/speclight-app/");
+                if(await canLaunchUrl(url)){
+                  await launchUrl(url, mode: launchMode);
+                }else {
+                  throw 'Could not launch $url';
+                }
+              },
               child: Align(
                   child: Text("http://hexa.fis.agh.edu.pl/speclight-app/",
                       style: TextStyle(
@@ -81,7 +97,7 @@ class ResorcesPage extends StatelessWidget {
           Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
 
           Padding(padding: EdgeInsets.only(bottom: 110.0)),
-          Text("Share our app!", style: Theme.of(context).textTheme.headline5),
+          Text(AppLocalizations.of(context)!.shareEncourage, style: Theme.of(context).textTheme.headline5),
           Padding(padding: EdgeInsets.only(bottom: 15.0)),
           GridView(
             physics: NeverScrollableScrollPhysics(),
@@ -98,25 +114,35 @@ class ResorcesPage extends StatelessWidget {
                     imageSize: 35,
                     label: "Facebook",
                     color: Color(0xFFbb8000),
+                    onPressed: (){},
                   ),
                   ImageButton(
                     imagePath: "assets/instagramOrange.png",
                     imageSize: 35,
                     label: "Instagram",
                     color: Color(0xFFbb8000),
+                    onPressed: () async{
+                      Uri url = Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                      if(await canLaunchUrl(url)){
+                        await launchUrl(url, mode: launchMode);
+                      }else {
+                        throw 'Could not launch $url';
+                      }
+                    },
                   ),
                   ImageButton(
                     imagePath: "assets/linkedinOrange.png",
                     imageSize: 35,
                     label: "Linkedin",
                     color: Color(0xFFbb8000),
+                    onPressed: (){},
                   ),
                   ImageButton(
                     imagePath: "assets/twitterOrange.png",
                     imageSize: 35,
                     label: "Twitter",
                     color: Color(0xFFbb8000),
-                    onPressed: (){print("twitter");},
+                    onPressed: (){},
                   ),
             ],
           )

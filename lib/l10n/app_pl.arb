@@ -21,5 +21,7 @@
   "error_message": "Coś poszło nie tak",
   "retry": "Ponów",
   "next": "Kontynuuj",
-  "resources": "Zasoby"
+  "resources": "Zasoby",
+  "youtube": "Kanał na YouTube z poradnikami",
+  "shareEncourage": "Udostepnij naszą aplikacje!"
 }

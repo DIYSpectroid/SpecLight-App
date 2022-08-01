@@ -90,5 +90,13 @@
     "resources": "Resources",
     "@resources": {
         "description": "Button leading to section with additional resources for user"
+    },
+    "youtube": "YouTube channel with videotutorials",
+    "@youtube": {
+        "description": "tooltip for youtube channel"
+    },
+    "shareEncourage": "Share our app!",
+    "@shareEncourage": {
+        "description": "message above sharing buttons"
     }
 }
