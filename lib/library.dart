@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'new_ui_components.dart';
+import 'overview.dart';
 
 class LibraryPage extends StatelessWidget {
   LibraryPage({Key? key, required this.chooseID, required this.prefs}) : super(key: key);
@@ -40,7 +41,7 @@ class LibraryPage extends StatelessWidget {
               return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 240,
-                      mainAxisExtent: 180,
+                      mainAxisExtent: 185,
                       ),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext ctx, index) {
@@ -49,7 +50,10 @@ class LibraryPage extends StatelessWidget {
                         splashColor:
                             Theme.of(context).accentColor.withAlpha(30),
                         onTap: () {
-                          debugPrint('Card tapped.');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => OverviewPage(index: index, prefs: prefs)),
+                          );
                         },
                         child: Column(
                           children: [

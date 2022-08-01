@@ -106,5 +106,13 @@
     "category1": "Natural",
     "@category0": {
         "description": "category of lightsources"
+    },
+    "overview": "Overview",
+    "@overview": {
+        "description": "title of page with lightsource overview"
+    },
+    "spectrapeaks": "Spectra peaks:",
+    "@spectrapeaks": {
+        "description": "Sentence above list of spectra peaks"
     }
 }
