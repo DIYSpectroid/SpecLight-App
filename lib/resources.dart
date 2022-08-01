@@ -15,7 +15,8 @@ class ResorcesPage extends StatelessWidget {
           title: Text(
         AppLocalizations.of(context)!.resources,
         style: Theme.of(context).textTheme.headline6,
-      )),
+      ),
+      ),
       body: ListView(
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
