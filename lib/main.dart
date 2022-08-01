@@ -14,9 +14,10 @@ import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
   final cameras = await availableCameras();
   CameraDescription firstCamera = cameras.first;
-  runApp(MyApp(camera: firstCamera));
+  runApp(MyApp(camera: firstCamera, prefs: prefs));
   HueConversionData.initialize(false);
   HueConversionData.initialize(true);
 }
@@ -42,9 +43,10 @@ MaterialColor buildMaterialColor(Color color) {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key, required this.camera}) : super(key: key);
+  MyApp({Key? key, required this.camera, required this.prefs}) : super(key: key);
 
   final CameraDescription camera;
+  SharedPreferences prefs;
 
 
   // This widget is the root of your application.
@@ -75,7 +77,7 @@ class MyApp extends StatelessWidget {
                   headline6: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),
-              home: MainPage(camera: camera, chooseID: ValueNotifier<int>(0)),
+              home: MainPage(camera: camera, chooseID: ValueNotifier<int>(0), prefs: prefs),
             );
           }
       ),
@@ -84,8 +86,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  MainPage({Key? key, required this.camera, required this.chooseID}) : super(key: key);
+  MainPage({Key? key, required this.camera, required this.chooseID, required this.prefs}) : super(key: key);
   final CameraDescription camera;
+  SharedPreferences prefs;
   ValueNotifier<int> chooseID ;
   @override
   State<MainPage> createState() => _MainPage();
@@ -93,12 +96,10 @@ class MainPage extends StatefulWidget {
 
 class _MainPage extends State<MainPage> {
     void _loadLanguage() async {
-
-      final prefs = await SharedPreferences.getInstance();
       var language = Provider.of<AppLocale>(context, listen: false);
       setState(() {
-        if(prefs.containsKey('language')) {
-          language.changeLocale(Locale(prefs.getString('language')!));
+        if(widget.prefs.containsKey('language')) {
+          language.changeLocale(Locale(widget.prefs.getString('language')!));
         }
       });
     }
@@ -118,7 +119,7 @@ class _MainPage extends State<MainPage> {
                 index: value,
                 children: [
                   CameraPage(camera: widget.camera, chooseID: widget.chooseID),
-                  LibraryPage(chooseID: widget.chooseID),
+                  LibraryPage(chooseID: widget.chooseID, prefs: widget.prefs),
                   ResorcesPage(chooseID: widget.chooseID),
                   LanguageChange(chooseID: widget.chooseID)
                 ]

@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'new_ui_components.dart';
 
 class LibraryPage extends StatelessWidget {
-  LibraryPage({Key? key, required this.chooseID}) : super(key: key);
+  LibraryPage({Key? key, required this.chooseID, required this.prefs}) : super(key: key);
   ValueNotifier<int> chooseID;
-  List<String> categories = <String>["Gas-discharge lamp", "Natural"];
+
+  SharedPreferences prefs;
 
   Future<List<dynamic>> OpenDatabase() async {
     String jsonString = await rootBundle.loadString('assets/testspectra.json');
@@ -18,6 +20,7 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> categories = <String>[AppLocalizations.of(context)!.category0, AppLocalizations.of(context)!.category1];
     return Scaffold(
       appBar: AppBar(
           title: Text(
@@ -54,7 +57,7 @@ class LibraryPage extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
                               child: Align(
-                                  child: Text(snapshot.data![index]["name_en"],
+                                  child: Text(snapshot.data![index]["name_" + prefs.getString('language')!],
                                       style: TextStyle(fontSize: 20)),
                                   alignment: Alignment.centerLeft),
                             ),

@@ -98,5 +98,13 @@
     "shareEncourage": "Share our app!",
     "@shareEncourage": {
         "description": "message above sharing buttons"
+    },
+    "category0": "Gas-discharge lamp",
+    "@category0": {
+        "description": "category of lightsources"
+    },
+    "category1": "Natural",
+    "@category0": {
+        "description": "category of lightsources"
     }
 }
