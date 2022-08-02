@@ -114,5 +114,17 @@
     "spectrapeaks": "Spectra peaks:",
     "@spectrapeaks": {
         "description": "Sentence above list of spectra peaks"
+    },
+    "spectradescpart1": "nm with ",
+    "@spectradescpart1": {
+        "description": "first part of sentence (x)nm with (y)% intensity"
+    },
+    "spectradescpart2": "% intensity",
+    "@spectradescpart2": {
+        "description": "second part of sentence (x)nm with (y)% intensity"
+    },
+    "wikipedia": "LEARN MORE ON WIKIPEDIA",
+    "@wikipedia": {
+        "description": "Button taking us to lightsource wikipedia page"
     }
 }

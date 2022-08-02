@@ -27,5 +27,8 @@
   "category0": "Lampa wyładownicza",
   "category1": "Naturalne",
   "overview": "Podsumowanie",
-  "spectrapeaks": "Piki w spektrum:"
+  "spectrapeaks": "Piki w spektrum:",
+  "spectradescpart1": "nm z intensywnościa ",
+  "spectradescpart2": "%",
+  "wikipedia": "PRZECZYTAJ WIĘCEJ NA WIKIPEDII"
 }

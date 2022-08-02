@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'new_ui_components.dart';
 
 class OverviewPage extends StatelessWidget {
@@ -11,6 +12,7 @@ class OverviewPage extends StatelessWidget {
       : super(key: key);
   int index;
   SharedPreferences prefs;
+  LaunchMode launchMode = LaunchMode.externalApplication;
 
   Future<List<dynamic>> OpenDatabase() async {
     String jsonString = await rootBundle.loadString('assets/testspectra.json');
@@ -77,12 +79,13 @@ class OverviewPage extends StatelessWidget {
                         ),
                         ListView.builder(
                             shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
                             itemCount: snapshot.data![index]["peaks"].length,
                             itemBuilder: (BuildContext context, int number) {
                               return Container(
                                   padding: EdgeInsets.fromLTRB(0, 3.0, 0, 3.0),
                                   child: Text(
-                                      "${snapshot.data![index]["peaks"][number]["wavelength"]}nm with ${snapshot.data![index]["peaks"][number]["intensity"]}% intensity",
+                                    ("${snapshot.data![index]["peaks"][number]["wavelength"]}" + AppLocalizations.of(context)!.spectradescpart1 + "${snapshot.data![index]["peaks"][number]["intensity"]}" + AppLocalizations.of(context)!.spectradescpart2),
                                   style: TextStyle(color: Colors.black54, fontSize: 16)
                                     ,));
                             })
@@ -90,6 +93,19 @@ class OverviewPage extends StatelessWidget {
                     ),
                   )
                 ],
+              ),
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: OutlinedButton.icon(
+                onPressed: () async {
+                  Uri url = Uri.parse(snapshot.data![index]["wikipedia_page"]);
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: launchMode);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
+                },
+                icon: const Icon(Icons.add),
+                label: Text(AppLocalizations.of(context)!.wikipedia),
               ),
             );
           } else {

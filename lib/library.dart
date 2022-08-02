@@ -41,7 +41,7 @@ class LibraryPage extends StatelessWidget {
               return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 240,
-                      mainAxisExtent: 185,
+                      mainAxisExtent: 190,
                       ),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (BuildContext ctx, index) {
@@ -58,20 +58,30 @@ class LibraryPage extends StatelessWidget {
                         child: Column(
                           children: [
                             Image.asset(snapshot.data![index]["example_photo"], width: double.infinity, height: 100),
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                              ),
+                            ),
                             Container(
-                              padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+                              padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
                               child: Align(
                                   child: Text(snapshot.data![index]["name_" + prefs.getString('language')!],
                                       style: TextStyle(fontSize: 20)),
                                   alignment: Alignment.centerLeft),
                             ),
                             Container(
-                              padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                              padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
                               child: Align(
                                   child: Text(
                                       categories[snapshot.data![index]["class"]],
                                       style: TextStyle(fontSize: 14, color: Colors.black54)),
                                   alignment: Alignment.centerLeft),
+                            ),
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                              ),
                             )
                           ],
                         ),

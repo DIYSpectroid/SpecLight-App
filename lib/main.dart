@@ -101,6 +101,10 @@ class _MainPage extends State<MainPage> {
         if(widget.prefs.containsKey('language')) {
           language.changeLocale(Locale(widget.prefs.getString('language')!));
         }
+        else
+        {
+          widget.prefs.setString('language', language.locale.toString());
+        }
       });
     }
 
