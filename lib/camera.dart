@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:spectroid/rhombus.dart';
 import 'crop_image.dart';
 import 'new_ui_components.dart';
@@ -54,7 +55,16 @@ class _CameraPage extends State<CameraPage> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.choose_header, style: Theme.of(context).textTheme.headline6,),
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.photo_library, color: Colors.white))
+          IconButton(onPressed: () async{
+            XFile? file = await picker.pickImage(source: ImageSource.gallery);
+            if(file != null) {
+              await Navigator.push((context),
+                  MaterialPageRoute(builder:
+                      (context) =>
+                      CropPhotoPage(imageFile: File(file!.path)),));
+            }
+          },
+              icon: Icon(Icons.photo_library, color: Colors.white))
         ],
       ),
       body: Center(
