@@ -86,8 +86,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-        title: Text(AppLocalizations.of(context)!.analysis_header),
+        title: Text(AppLocalizations.of(context)!.analysis_header, style: TextStyle(color: Colors.white),),
+        leading: const BackButton(
+          color: Colors.white,
+        )
       ),
       body: Center(
         child:

@@ -88,7 +88,8 @@ class OverviewPage extends StatelessWidget {
                                     ("${snapshot.data![index]["peaks"][number]["wavelength"]}" + AppLocalizations.of(context)!.spectradescpart1 + "${snapshot.data![index]["peaks"][number]["intensity"]}" + AppLocalizations.of(context)!.spectradescpart2),
                                   style: TextStyle(color: Colors.black54, fontSize: 16)
                                     ,));
-                            })
+                            }),
+                        Padding(padding: EdgeInsets.only(bottom: 70))
                       ],
                     ),
                   )
@@ -106,6 +107,7 @@ class OverviewPage extends StatelessWidget {
                 },
                 icon: const Icon(Icons.add),
                 label: Text(AppLocalizations.of(context)!.wikipedia),
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white)),
               ),
             );
           } else {
