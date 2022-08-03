@@ -1,6 +1,4 @@
-
-
-import 'image_data_extraction.dart';
+import 'data_extraction/image_data.dart';
 
 class RGBAnalyser{
   List<RGBPixel> rgbPixels;

@@ -1,8 +1,8 @@
-import 'dart:ffi';
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:image/image.dart' as img;
 import 'dart:io';
+
+import 'image_data.dart';
 
 class ImageDataExtraction{
 
@@ -21,7 +21,7 @@ class ImageDataExtraction{
   static Future<ImageData> getImageData(String imageFilePath) async{
     List<int> values = await File(imageFilePath).readAsBytes();
     img.Image image = img.decodeImage(values)!;
-    return ImageData(image.data, image.height, image.width);
+    return new ImageData(imageFilePath, image.data, image.height, image.width);
   }
 
   static Future<List<HSVPixel>> convertBytesToHSV(List<int> bytes) async{
@@ -65,29 +65,3 @@ class ImageDataExtraction{
   }
 }
 
-class ImageData{
-  List<int> bytes;
-  int height;
-  int width;
-
-  ImageData(this.bytes, this.height, this.width);
-}
-
-class HSVPixel{
-  int hue;
-  int saturation;
-  int value;
-
-  HSVPixel(this.hue, this.saturation, this.value);
-}
-
-class RGBPixel{
-  int red;
-  int green;
-  int blue;
-  late int intensity;
-
-  RGBPixel(this.red, this.green, this.blue){
-    intensity = red + green + blue;
-  }
-}

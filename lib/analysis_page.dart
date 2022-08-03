@@ -1,17 +1,18 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:spectroid/image_analysis.dart';
+import 'package:spectroid/image_analysis/alogrithm_factory.dart';
+import 'package:spectroid/image_analysis/analysis/spectrable.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:spectroid/image_data_extraction.dart';
+import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
+
+import 'image_analysis/data_extraction/image_data.dart';
 
 
 final ImagePicker picker = ImagePicker();
@@ -33,16 +34,11 @@ class _AnalysisPageState extends State<AnalysisPage> {
   Future<ImageData>? imageData;
   File? imageFile;
 
-  Future<ImageData> analyzeImage() async {
-    imageData = ImageDataExtraction.getImageData(widget.imageFilePath!);
-    return imageData!;
-  }
-
-  List<charts.Series<LinearData, double>> createPlotData(Spectrum spectrum) {
+  List<charts.Series<LinearData, double>> createPlotData(Spectrable spectrable) {
 
     List<LinearData> data = [];
-    for (double key in spectrum.getKeys()) {
-      data.add(LinearData(key, spectrum.spectrum[key]!));
+    for (double key in spectrable.spectrum.keys) {
+      data.add(LinearData(key, spectrable.spectrum[key]!));
     }
     data.sort((e1,e2) => e1.x.compareTo(e2.x));
     return [
@@ -56,14 +52,23 @@ class _AnalysisPageState extends State<AnalysisPage> {
     ];
   }
 
-  Future<Spectrum> getSpectrum() async{
-    ImageData imageData = await analyzeImage();
-    List<int> rgba = await compute(ImageDataExtraction.getRGBABytesFromABGRInts, imageData.bytes);
-    List<HSVPixel> hsvPixels =  await compute(ImageDataExtraction.convertBytesToHSV, rgba);
-    List<RGBPixel> rgbPixels = await compute(ImageDataExtraction.convertBytesToRGB, rgba);
+  Future<Spectrable?> getSpectrum() async{
+    ImageData imageData = await compute(ImageDataExtraction.getImageData, widget.imageFilePath!);
+    await imageData.extractData();
 
-    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, rgbPixels, widget.algorithm, widget.grating);
-    return spectrum;
+    print(imageData.width);
+
+    Spectrable? spectrumGenerator = AlgorithmFactory()
+        .setAlgorithm(widget.algorithm)
+        .setGrating(widget.grating)
+        .setImageData(imageData)
+        .create();
+
+    if(spectrumGenerator == null) {
+      throw new Exception("Something went wrong");
+    }
+    spectrumGenerator.generateSpectrum();
+    return spectrumGenerator;
   }
 
   double chosen_x = 0;
@@ -91,9 +96,9 @@ class _AnalysisPageState extends State<AnalysisPage> {
       ),
       body: Center(
         child:
-        FutureBuilder<Spectrum>(
+        FutureBuilder<Spectrable?>(
             future: getSpectrum(),
-            builder: (BuildContext context, AsyncSnapshot<Spectrum?> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
                 List<charts.Series<LinearData, double>> seriesList = createPlotData(snapshot.data!);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
@@ -114,16 +119,17 @@ class _AnalysisPageState extends State<AnalysisPage> {
                         domainAxis: const charts.NumericAxisSpec(
                           tickProviderSpec:
                             charts.BasicNumericTickProviderSpec(zeroBound: false),
-                          viewport: charts.NumericExtents(Spectrum.wavelengthMin, Spectrum.wavelengthMax))
+                          viewport: charts.NumericExtents(SpectrablesMetadata.WAVELENGTH_MIN, SpectrablesMetadata.WAVELENGTH_MAX))
                     ),
                     height: 400),
                     Row(
                       children: [
                         Padding(padding: EdgeInsets.all(13.8)),
-                        if(widget.algorithm != Algorithm.hsvPositionBasedWithWiki)
+                        // if(widget.algorithm != Algorithm.hsvPositionBasedWithWiki)
                           Expanded(child: Image.asset("assets/spectrumGen.jpg"))
-                        else
-                          Expanded(child: Image.asset("assets/wikispectrum.png")),
+                        // else
+                        //   Expanded(child: Image.asset("assets/wikispectrum.png"))
+                        ,
                         Padding(padding: EdgeInsets.all(9.0)),
                       ],
                     ),
