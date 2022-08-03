@@ -1,6 +1,7 @@
 import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
 
 import 'analysis/algorithms/hsv_position_polynomial.dart';
+import 'analysis/algorithms/hsv_position_polynomial_sure_bounds.dart';
 import 'analysis/spectrable.dart';
 
 class AlgorithmFactory {
@@ -32,6 +33,9 @@ class AlgorithmFactory {
       case Algorithm.hsvPositionPolynomial:
         var functionsCoefficients = chooseCoefficients();
         return HSVPositionPolynomial(functionsCoefficients.first, functionsCoefficients.last, imageData!);
+      case Algorithm.hsvPositionPolynomialSureBounds:
+        var functionsCoefficients = chooseCoefficients();
+        return HSVPositionPolynomialSureBounds(functionsCoefficients.first, functionsCoefficients.last, imageData!);
       // case Algorithm.hsvPositionPolynomialWithOpenstax:
       //   return hsvPositionBasedPolynomialWithOpenstax();
       // case Algorithm.hsvPositionWithHighValueControl:
@@ -68,6 +72,7 @@ class AlgorithmFactory {
 enum Algorithm {
   // hsvPositionLinear,
   hsvPositionPolynomial,
+  hsvPositionPolynomialSureBounds,
   // hsvPositionPolynomialWithOpenstax,
   // hsvPositionWithHighValueControl,
   // rgbTest

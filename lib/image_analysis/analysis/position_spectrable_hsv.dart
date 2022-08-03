@@ -13,34 +13,28 @@ class PositionSpectrableHSV extends SpectrableHSV {
     int lastLightPositionX = 0;
     double firstLightWavelength = wavelengthMin.toDouble();
     double lastLightWavelength = wavelengthMax.toDouble();
-    int minimalAllowedX = 0;
-    int maximalAllowedX = imageData.width;
 
     for (HSVPixel pixel in imageData.hsvPixels) {
-      if (/*currentPositionX >= minimalAllowedX && currentPositionX <= maximalAllowedX && */isHSVPixelValid(pixel)) {
+      if (isHSVPixelValid(pixel)) {
         firstLightPositionX = min(firstLightPositionX, currentPositionX);
         lastLightPositionX = max(lastLightPositionX, currentPositionX);
         if(firstLightPositionX == currentPositionX){
           double wavelength = linearHueToWavelength(pixel.hue);
           if(isPixelXYZRatioUnique(wavelength)){
             firstLightWavelength = wavelength;
-          } else {
-            minimalAllowedX = currentPositionX;
           }
-
         }
         if(lastLightPositionX == currentPositionX){
           double wavelength = linearHueToWavelength(pixel.hue);
           if(isPixelXYZRatioUnique(wavelength)){
             lastLightWavelength = wavelength;
-          } else {
-            maximalAllowedX = currentPositionX;
           }
         }
       }
       currentPositionX++;
       currentPositionX = currentPositionX % imageData.width;
     }
+
     return SpectrumPositionBounds(firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength);
   }
 }
