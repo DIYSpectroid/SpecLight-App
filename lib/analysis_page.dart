@@ -13,6 +13,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
 
 import 'image_analysis/data_extraction/image_data.dart';
+import 'numerical_analysis/find_peaks.dart';
 
 
 final ImagePicker picker = ImagePicker();
@@ -103,6 +104,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 List<charts.Series<LinearData, double>> seriesList = createPlotData(snapshot.data!);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
+                //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
                 return
                 ListView(
                   children: [
