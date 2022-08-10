@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spectroid/image_analysis.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:spectroid/image_data_extraction.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -62,19 +61,6 @@ class _AnalysisPageState extends State<AnalysisPage> {
   double chosen_x = 0;
   double chosen_y = 0;
 
-  _onSelectionChanged(charts.SelectionModel model){
-    final selectedDatum = model.selectedDatum;
-    double x = 0;
-    double y = 0;
-    print('test');
-    if (selectedDatum.isNotEmpty) {
-       x = selectedDatum.first.datum.x;
-       y = selectedDatum.last.datum.y;
-    }
-
-    setState(() {chosen_x = x; chosen_y = y;});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +88,6 @@ class _AnalysisPageState extends State<AnalysisPage> {
                           Theme.of(context).accentColor
                         ],
                         primaryYAxis: NumericAxis(
-                          labelFormat: '{value}%',
                           visibleMinimum: 0,
                           visibleMaximum: 100
                         ),
@@ -132,7 +117,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     ),
                     Row(
                       children: [
-                        Padding(padding: EdgeInsets.only(right: 47)),
+                        Padding(padding: EdgeInsets.only(right: 36)),
                         if(widget.algorithm != Algorithm.hsvPositionBasedWithWiki)
                           Expanded(child: Image.asset("assets/spectrumGen.jpg"))
                         else
@@ -143,7 +128,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Padding(padding: EdgeInsets.all(18.0)),
                     Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
                     Padding(padding: EdgeInsets.all(4.0)),
-                    Image.file(File(widget.imageFilePath!)),
+                    Container(child: Image.file(File(widget.imageFilePath!)), height: 200,),
                   ],
                 );
               }
