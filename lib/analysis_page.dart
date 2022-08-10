@@ -40,9 +40,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
     return imageData!;
   }
 
-  List<LinearData> createPlotData(Spectrum spectrum) {
-
-
+  List<LinearData> createPlotData(Spectrable spectrable) {
     List<LinearData> data = [];
     for (double key in spectrable.spectrum.keys) {
       data.add(LinearData(key, spectrable.spectrum[key]!));
@@ -89,6 +87,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
             builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
                 List<LinearData> seriesList = createPlotData(snapshot.data!);
+                List<LinearData> peaks = FindPeaks(snapshot.data!.spectrum, 0, double.infinity);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
                 //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
@@ -98,7 +97,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Container(
                     child: SfCartesianChart(
                         palette: <Color>[
-                          Theme.of(context).accentColor
+                          Theme.of(context).accentColor,
+                          Theme.of(context).primaryColor
                         ],
                         primaryYAxis: NumericAxis(
                           visibleMinimum: 0,
@@ -115,11 +115,12 @@ class _AnalysisPageState extends State<AnalysisPage> {
                               xValueMapper: (LinearData data, _) => data.x,
                               yValueMapper: (LinearData data, _) => data.y
                           ),
-                          /*ScatterSeries<LinearData, double>(
-                              dataSource: seriesList,
+                          ScatterSeries<LinearData, double>(
+                              animationDelay: 2000,
+                              dataSource: peaks,
                               xValueMapper: (LinearData data, _) => data.x,
                               yValueMapper: (LinearData data, _) => data.y
-                          )*/
+                          )
                         ],
                     ),
                     height: 400, width: 100, padding: EdgeInsets.fromLTRB(0, 15, 25, 0),
@@ -127,7 +128,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Row(
                       children: [
                         Padding(padding: EdgeInsets.only(right: 36)),
-                        Expanded(child: Image.asset("assets/spectrumGen.jpg"))
+                        Expanded(child: Image.asset("assets/spectrumGen.jpg")),
                         Padding(padding: EdgeInsets.only(left: 30)),
                       ],
                     ),
