@@ -1,18 +1,19 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:spectroid/image_analysis.dart';
-import 'package:spectroid/image_data_extraction.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:spectroid/image_analysis/alogrithm_factory.dart';
+import 'package:spectroid/image_analysis/analysis/spectrable.dart';
+import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
 
+import 'image_analysis/data_extraction/image_data.dart';
+import 'numerical_analysis/find_peaks.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -33,6 +34,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
   Future<ImageData>? imageData;
   File? imageFile;
 
+
   Future<ImageData> analyzeImage() async {
     imageData = ImageDataExtraction.getImageData(widget.imageFilePath!);
     return imageData!;
@@ -40,22 +42,32 @@ class _AnalysisPageState extends State<AnalysisPage> {
 
   List<LinearData> createPlotData(Spectrum spectrum) {
 
+
     List<LinearData> data = [];
-    for (double key in spectrum.getKeys()) {
-      data.add(LinearData(key, spectrum.spectrum[key]!));
+    for (double key in spectrable.spectrum.keys) {
+      data.add(LinearData(key, spectrable.spectrum[key]!));
     }
     data.sort((e1,e2) => e1.x.compareTo(e2.x));
     return data;
   }
 
-  Future<Spectrum> getSpectrum() async{
-    ImageData imageData = await analyzeImage();
-    List<int> rgba = await compute(ImageDataExtraction.getRGBABytesFromABGRInts, imageData.bytes);
-    List<HSVPixel> hsvPixels =  await compute(ImageDataExtraction.convertBytesToHSV, rgba);
-    List<RGBPixel> rgbPixels = await compute(ImageDataExtraction.convertBytesToRGB, rgba);
+  Future<Spectrable?> getSpectrum() async{
+    ImageData imageData = await compute(ImageDataExtraction.getImageData, widget.imageFilePath!);
+    await imageData.extractData();
 
-    Spectrum spectrum = Spectrum(hsvPixels, imageData.width, imageData.height, rgbPixels, widget.algorithm, widget.grating);
-    return spectrum;
+    print(imageData.width);
+
+    Spectrable? spectrumGenerator = AlgorithmFactory()
+        .setAlgorithm(widget.algorithm)
+        .setGrating(widget.grating)
+        .setImageData(imageData)
+        .create();
+
+    if(spectrumGenerator == null) {
+      throw new Exception("Something went wrong");
+    }
+    spectrumGenerator.generateSpectrum();
+    return spectrumGenerator;
   }
 
   double chosen_x = 0;
@@ -72,13 +84,14 @@ class _AnalysisPageState extends State<AnalysisPage> {
       ),
       body: Center(
         child:
-        FutureBuilder<Spectrum>(
+        FutureBuilder<Spectrable?>(
             future: getSpectrum(),
-            builder: (BuildContext context, AsyncSnapshot<Spectrum?> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
                 List<LinearData> seriesList = createPlotData(snapshot.data!);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
+                //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
                 return
                 ListView(
                   children: [
@@ -92,8 +105,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                           visibleMaximum: 100
                         ),
                         primaryXAxis: NumericAxis(
-                            visibleMinimum: Spectrum.wavelengthMin.toDouble(),
-                            visibleMaximum: Spectrum.wavelengthMax.toDouble(),
+                            visibleMinimum: SpectrablesMetadata.WAVELENGTH_MIN.toDouble(),
+                            visibleMaximum: SpectrablesMetadata.WAVELENGTH_MAX.toDouble(),
                         ),
                         series: <ChartSeries>[
                           // Renders line chart
@@ -108,20 +121,13 @@ class _AnalysisPageState extends State<AnalysisPage> {
                               yValueMapper: (LinearData data, _) => data.y
                           )*/
                         ],
-                        /*domainAxis: const charts.NumericAxisSpec(
-                          tickProviderSpec:
-                            charts.BasicNumericTickProviderSpec(zeroBound: false),
-                          viewport: charts.NumericExtents(Spectrum.wavelengthMin, Spectrum.wavelengthMax))*/
                     ),
                     height: 400, width: 100, padding: EdgeInsets.fromLTRB(0, 15, 25, 0),
                     ),
                     Row(
                       children: [
                         Padding(padding: EdgeInsets.only(right: 36)),
-                        if(widget.algorithm != Algorithm.hsvPositionBasedWithWiki)
-                          Expanded(child: Image.asset("assets/spectrumGen.jpg"))
-                        else
-                          Expanded(child: Image.asset("assets/wikispectrum.png")),
+                        Expanded(child: Image.asset("assets/spectrumGen.jpg"))
                         Padding(padding: EdgeInsets.only(left: 30)),
                       ],
                     ),
