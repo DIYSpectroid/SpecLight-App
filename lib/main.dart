@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/image_analysis/data_extraction/light_hue_conversion_extractor.dart';
-import 'choose_image.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:spectroid/library.dart';
 import 'package:spectroid/resources.dart';
