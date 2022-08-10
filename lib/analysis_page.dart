@@ -9,12 +9,11 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spectroid/image_analysis/alogrithm_factory.dart';
 import 'package:spectroid/image_analysis/analysis/spectrable.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
 
 import 'image_analysis/data_extraction/image_data.dart';
 import 'numerical_analysis/find_peaks.dart';
-
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -35,22 +34,21 @@ class _AnalysisPageState extends State<AnalysisPage> {
   Future<ImageData>? imageData;
   File? imageFile;
 
-  List<charts.Series<LinearData, double>> createPlotData(Spectrable spectrable) {
+
+  Future<ImageData> analyzeImage() async {
+    imageData = ImageDataExtraction.getImageData(widget.imageFilePath!);
+    return imageData!;
+  }
+
+  List<LinearData> createPlotData(Spectrum spectrum) {
+
 
     List<LinearData> data = [];
     for (double key in spectrable.spectrum.keys) {
       data.add(LinearData(key, spectrable.spectrum[key]!));
     }
     data.sort((e1,e2) => e1.x.compareTo(e2.x));
-    return [
-      charts.Series<LinearData, double>(
-        id: 'Colors',
-        colorFn: (_, __) => charts.MaterialPalette.gray.shadeDefault,
-        domainFn: (LinearData xs, _) => xs.x,
-        measureFn: (LinearData ys, _) => ys.y,
-        data: data,
-      )
-    ];
+    return data;
   }
 
   Future<Spectrable?> getSpectrum() async{
@@ -75,25 +73,14 @@ class _AnalysisPageState extends State<AnalysisPage> {
   double chosen_x = 0;
   double chosen_y = 0;
 
-  _onSelectionChanged(charts.SelectionModel model){
-    final selectedDatum = model.selectedDatum;
-    double x = 0;
-    double y = 0;
-    print('test');
-    if (selectedDatum.isNotEmpty) {
-       x = selectedDatum.first.datum.x;
-       y = selectedDatum.last.datum.y;
-    }
-
-    setState(() {chosen_x = x; chosen_y = y;});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-        title: Text(AppLocalizations.of(context)!.analysis_header),
+        title: Text(AppLocalizations.of(context)!.analysis_header, style: TextStyle(color: Colors.white),),
+        leading: const BackButton(
+          color: Colors.white,
+        )
       ),
       body: Center(
         child:
@@ -101,7 +88,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
             future: getSpectrum(),
             builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
-                List<charts.Series<LinearData, double>> seriesList = createPlotData(snapshot.data!);
+                List<LinearData> seriesList = createPlotData(snapshot.data!);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
                 //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
@@ -109,38 +96,45 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 ListView(
                   children: [
                     Container(
-                    child: charts.LineChart(
-                        seriesList,
-                        animate: true,
-                        selectionModels: [
-                          new charts.SelectionModelConfig(
-                            type: charts.SelectionModelType.info,
-                            changedListener: _onSelectionChanged,
-                          )
+                    child: SfCartesianChart(
+                        palette: <Color>[
+                          Theme.of(context).accentColor
                         ],
-                        domainAxis: const charts.NumericAxisSpec(
-                          tickProviderSpec:
-                            charts.BasicNumericTickProviderSpec(zeroBound: false),
-                          viewport: charts.NumericExtents(SpectrablesMetadata.WAVELENGTH_MIN, SpectrablesMetadata.WAVELENGTH_MAX))
+                        primaryYAxis: NumericAxis(
+                          visibleMinimum: 0,
+                          visibleMaximum: 100
+                        ),
+                        primaryXAxis: NumericAxis(
+                            visibleMinimum: SpectrablesMetadata.WAVELENGTH_MIN.toDouble(),
+                            visibleMaximum: SpectrablesMetadata.WAVELENGTH_MAX.toDouble(),
+                        ),
+                        series: <ChartSeries>[
+                          // Renders line chart
+                          LineSeries<LinearData, double>(
+                              dataSource: seriesList,
+                              xValueMapper: (LinearData data, _) => data.x,
+                              yValueMapper: (LinearData data, _) => data.y
+                          ),
+                          /*ScatterSeries<LinearData, double>(
+                              dataSource: seriesList,
+                              xValueMapper: (LinearData data, _) => data.x,
+                              yValueMapper: (LinearData data, _) => data.y
+                          )*/
+                        ],
                     ),
-                    height: 400),
+                    height: 400, width: 100, padding: EdgeInsets.fromLTRB(0, 15, 25, 0),
+                    ),
                     Row(
                       children: [
-                        Padding(padding: EdgeInsets.all(13.8)),
-                        // if(widget.algorithm != Algorithm.hsvPositionBasedWithWiki)
-                          Expanded(child: Image.asset("assets/spectrumGen.jpg"))
-                        // else
-                        //   Expanded(child: Image.asset("assets/wikispectrum.png"))
-                        ,
-                        Padding(padding: EdgeInsets.all(9.0)),
+                        Padding(padding: EdgeInsets.only(right: 36)),
+                        Expanded(child: Image.asset("assets/spectrumGen.jpg"))
+                        Padding(padding: EdgeInsets.only(left: 30)),
                       ],
                     ),
                     Padding(padding: EdgeInsets.all(18.0)),
-                    Text("Selected x: $chosen_x, selected y: $chosen_y"),
-                    Padding(padding: EdgeInsets.all(18.0)),
                     Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
                     Padding(padding: EdgeInsets.all(4.0)),
-                    Image.file(File(widget.imageFilePath!)),
+                    Container(child: Image.file(File(widget.imageFilePath!)), height: 200,),
                   ],
                 );
               }
