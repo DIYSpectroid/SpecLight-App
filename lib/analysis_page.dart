@@ -87,7 +87,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
             builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
                 List<LinearData> seriesList = createPlotData(snapshot.data!);
-                List<LinearData> peaks = FindPeaks(snapshot.data!.spectrum, 0, double.infinity);
+                List<LinearData> peaks = FindPeaks(seriesList, 20, double.infinity, 20, 1);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
                 //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
@@ -101,8 +101,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
                           Theme.of(context).primaryColor
                         ],
                         primaryYAxis: NumericAxis(
-                          visibleMinimum: 0,
-                          visibleMaximum: 100
+                          minimum: 0,
+                          maximum: 100,
+                          visibleMaximum: 109,
+                          maximumLabels: 5
                         ),
                         primaryXAxis: NumericAxis(
                             visibleMinimum: SpectrablesMetadata.WAVELENGTH_MIN.toDouble(),
@@ -119,7 +121,13 @@ class _AnalysisPageState extends State<AnalysisPage> {
                               animationDelay: 2000,
                               dataSource: peaks,
                               xValueMapper: (LinearData data, _) => data.x,
-                              yValueMapper: (LinearData data, _) => data.y
+                              yValueMapper: (LinearData data, _) => data.y,
+                              markerSettings: MarkerSettings(
+                                  height: 10,
+                                  width: 10,
+                                  // Scatter will render in diamond shape
+                                  shape: DataMarkerType.diamond
+                              )
                           )
                         ],
                     ),
