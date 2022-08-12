@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/image_analysis/data_extraction/light_hue_conversion_extractor.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:spectroid/library.dart';
-import 'package:spectroid/resources.dart';
+import 'package:spectroid/pages/library.dart';
+import 'package:spectroid/pages/resources.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'camera.dart';
-import 'language_change.dart';
+import 'pages/camera.dart';
+import 'pages/language_change.dart';
 import 'package:provider/provider.dart';
 
 void main() async{

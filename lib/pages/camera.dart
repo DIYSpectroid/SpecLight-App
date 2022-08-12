@@ -4,9 +4,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:spectroid/rhombus.dart';
+import 'package:spectroid/widgets/rhombus.dart';
 import 'crop_image.dart';
-import 'new_ui_components.dart';
+import '../widgets/new_ui_components.dart';
 
 class CameraPage extends StatefulWidget {
 
@@ -47,6 +47,36 @@ class _CameraPage extends State<CameraPage> {
     super.dispose();
   }
 
+  void gallery() async{
+    XFile? file = await picker.pickImage(source: ImageSource.gallery);
+    if(file != null) {
+      await Navigator.push((context),
+          MaterialPageRoute(builder:
+              (context) =>
+              CropPhotoPage(imageFile: File(file!.path)),));
+    }
+  }
+
+  void takePhoto() async{
+    // Take the Picture in a try / catch block. If anything goes wrong,
+    // catch the error.
+    try {
+      // Ensure that the camera is initialized.
+      await _initializeControllerFuture;
+      _controller.setFlashMode(FlashMode.off);
+      await _controller.lockCaptureOrientation();
+      // Attempt to take a picture and then get the location
+      // where the image file is saved.
+      final image = await _controller.takePicture();
+      await Navigator.push((context),
+          MaterialPageRoute(builder:
+              (context) => CropPhotoPage(imageFile: File(image.path)),));
+    } catch (e) {
+      // If an error occurs, log the error to the console.
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -55,16 +85,10 @@ class _CameraPage extends State<CameraPage> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.choose_header, style: Theme.of(context).textTheme.headline6,),
         actions: [
-          IconButton(onPressed: () async{
-            XFile? file = await picker.pickImage(source: ImageSource.gallery);
-            if(file != null) {
-              await Navigator.push((context),
-                  MaterialPageRoute(builder:
-                      (context) =>
-                      CropPhotoPage(imageFile: File(file!.path)),));
-            }
-          },
-              icon: Icon(Icons.photo_library, color: Colors.white))
+          IconButton(
+              onPressed: gallery,
+              icon: Icon(Icons.photo_library, color: Colors.white)
+          )
         ],
       ),
       body: Center(
@@ -98,25 +122,7 @@ class _CameraPage extends State<CameraPage> {
         scale: 1.2,
         child: FloatingActionButton(
           // Provide an onPressed callback.
-          onPressed: () async {
-            // Take the Picture in a try / catch block. If anything goes wrong,
-            // catch the error.
-            try {
-              // Ensure that the camera is initialized.
-              await _initializeControllerFuture;
-              _controller.setFlashMode(FlashMode.off);
-              await _controller.lockCaptureOrientation();
-              // Attempt to take a picture and then get the location
-              // where the image file is saved.
-              final image = await _controller.takePicture();
-              await Navigator.push((context),
-                  MaterialPageRoute(builder:
-                      (context) => CropPhotoPage(imageFile: File(image.path)),));
-            } catch (e) {
-              // If an error occurs, log the error to the console.
-              print(e);
-            }
-          },
+          onPressed: takePhoto,
           child: const Icon(Icons.camera_alt, color: Colors.white),
           shape: Rhombus(),
         ),

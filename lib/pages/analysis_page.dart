@@ -11,8 +11,8 @@ import 'package:spectroid/image_analysis/alogrithm_factory.dart';
 import 'package:spectroid/image_analysis/analysis/spectrable.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
 
-import 'image_analysis/data_extraction/image_data.dart';
-import 'numerical_analysis/find_peaks.dart';
+import '../image_analysis/data_extraction/image_data.dart';
+import '../numerical_analysis/find_peaks.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 final ImagePicker picker = ImagePicker();
