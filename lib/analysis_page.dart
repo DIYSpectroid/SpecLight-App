@@ -71,6 +71,34 @@ class _AnalysisPageState extends State<AnalysisPage> {
   double chosen_x = 0;
   double chosen_y = 0;
 
+
+  late TooltipBehavior _tooltipBehavior;
+  late TrackballBehavior _trackballBehavior;
+
+  @override
+  void initState() {
+    _tooltipBehavior = TooltipBehavior(
+        enable: true,
+        header: "Peak",
+        format: 'intensity: point.y%\nwavelength: point.xnm',
+        canShowMarker: false,
+        decimalPlaces: 1,
+        color: Color(0xFFFA7921)
+
+    );
+    _trackballBehavior = TrackballBehavior(
+      // Enables the trackball
+        enable: true,
+        tooltipDisplayMode: TrackballDisplayMode.nearestPoint,
+        tooltipSettings: InteractiveTooltip(
+            enable: true,
+            format: 'intensity: point.y%\nwavelength: point.xnm',
+            color: Color(0xFFFA7921),
+            decimalPlaces: 1,
+        )
+    );
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,6 +124,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                   children: [
                     Container(
                     child: SfCartesianChart(
+                      trackballBehavior: _trackballBehavior,
+                      tooltipBehavior: _tooltipBehavior,
                         palette: <Color>[
                           Theme.of(context).accentColor,
                           Theme.of(context).primaryColor
@@ -104,21 +134,26 @@ class _AnalysisPageState extends State<AnalysisPage> {
                           minimum: 0,
                           maximum: 100,
                           visibleMaximum: 109,
-                          maximumLabels: 5
+                          maximumLabels: 5,
+                          decimalPlaces: 1
                         ),
                         primaryXAxis: NumericAxis(
                             visibleMinimum: SpectrablesMetadata.WAVELENGTH_MIN.toDouble(),
                             visibleMaximum: SpectrablesMetadata.WAVELENGTH_MAX.toDouble(),
+                            decimalPlaces: 1,
                         ),
                         series: <ChartSeries>[
                           // Renders line chart
                           LineSeries<LinearData, double>(
                               dataSource: seriesList,
                               xValueMapper: (LinearData data, _) => data.x,
-                              yValueMapper: (LinearData data, _) => data.y
+                              yValueMapper: (LinearData data, _) => data.y,
+                               enableTooltip: false,
+
+
                           ),
                           ScatterSeries<LinearData, double>(
-                              animationDelay: 2000,
+                              animationDelay: 150,
                               dataSource: peaks,
                               xValueMapper: (LinearData data, _) => data.x,
                               yValueMapper: (LinearData data, _) => data.y,
@@ -127,7 +162,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                                   width: 10,
                                   // Scatter will render in diamond shape
                                   shape: DataMarkerType.diamond
-                              )
+                              ),
+                              enableTooltip: true,
                           )
                         ],
                     ),
