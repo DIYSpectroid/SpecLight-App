@@ -11,6 +11,7 @@ import 'package:spectroid/image_analysis/alogrithm_factory.dart';
 import 'package:spectroid/image_analysis/analysis/spectrable.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
 
+import 'analysis_page_components.dart';
 import 'image_analysis/data_extraction/image_data.dart';
 import 'numerical_analysis/find_peaks.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -83,19 +84,24 @@ class _AnalysisPageState extends State<AnalysisPage> {
         format: 'intensity: point.y%\nwavelength: point.xnm',
         canShowMarker: false,
         decimalPlaces: 1,
-        color: Color(0xFFFA7921)
-
+        color: Color(0xFFFA7921),
+        textStyle: TextStyle(fontSize: 14),
+        builder: (dynamic data, dynamic point, dynamic series,
+            int pointIndex, int seriesIndex) {
+                return CustomTooltip(y: point.y, x: point.x);
+            }
     );
+
     _trackballBehavior = TrackballBehavior(
       // Enables the trackball
         enable: true,
-        tooltipDisplayMode: TrackballDisplayMode.nearestPoint,
-        tooltipSettings: InteractiveTooltip(
-            enable: true,
-            format: 'intensity: point.y%\nwavelength: point.xnm',
-            color: Color(0xFFFA7921),
-            decimalPlaces: 1,
-        )
+        lineColor: Color(0xFFFA7921),
+        tooltipAlignment: ChartAlignment.center,
+        tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
+        builder: (BuildContext context, TrackballDetails trackballDetails) {
+          return CustomTrackball(y: trackballDetails.groupingModeInfo?.points[0].yValue, x: trackballDetails.groupingModeInfo?.points[0].xValue);
+        }
+
     );
     super.initState();
   }
