@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(const MyApp());
   HueConversionData.initialize(false);
-  HueConversionData.initialize(true);
+  // HueConversionData.initialize(true);
 }
 
 MaterialColor buildMaterialColor(Color color) {
