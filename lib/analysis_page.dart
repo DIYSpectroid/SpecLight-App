@@ -186,6 +186,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
                     Padding(padding: EdgeInsets.all(4.0)),
                     Container(child: Image.file(File(widget.imageFilePath!)), height: 200,),
+                    Padding(padding: EdgeInsets.all(4.0)),
+
                   ],
                 );
               }
