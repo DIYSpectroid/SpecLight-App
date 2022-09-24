@@ -27,8 +27,6 @@ class Spectrable {
   }
 
   void normalizeAndSampleSpectrumValues(){
-    print(spectrum.keys.first);
-    print(spectrum.keys.last);
     Map<double, double> newSpectrum = {};
     // for(double i = wavelengthMin; i <= wavelengthMax; i += 1) {
     //   newSpectrum[i] = 0;
