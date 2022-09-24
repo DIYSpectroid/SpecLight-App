@@ -93,10 +93,15 @@
         "wikipedia_page" : "https://en.wikipedia.org/wiki/Mercury",
         "example_photo" : "assets/chlorineLines.png",
         "peaks" : [
-            {"wavelength" : 455.4, "intensity": 100},
-            {"wavelength" : 493.41, "intensity": 30.769},
-            {"wavelength" : 614.17, "intensity": 30.769},
-            {"wavelength" : 649.69, "intensity": 18.462}
+            {"wavelength" : 413.07, "intensity":2.3077},
+            {"wavelength" : 455.4, "intensity":100},
+            {"wavelength" : 493.41, "intensity":30.769},
+            {"wavelength" : 585.37, "intensity":4.3077},
+            {"wavelength" : 614.17, "intensity":30.769},
+            {"wavelength" : 649.69, "intensity":18.462},
+            {"wavelength" : 659.53, "intensity":4.6154},
+            {"wavelength" : 667.53, "intensity":2.3077},
+            {"wavelength" : 669.38, "intensity":2.7692}
         ]
     },
     {

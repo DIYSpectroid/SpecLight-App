@@ -13,6 +13,7 @@ import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.d
 
 import 'analysis_page_components.dart';
 import 'image_analysis/data_extraction/image_data.dart';
+import 'numerical_analysis/compare_peaks.dart';
 import 'numerical_analysis/find_peaks.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -121,7 +122,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
             builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
                 List<LinearData> seriesList = createPlotData(snapshot.data!);
-                List<LinearData> peaks = FindPeaks(seriesList, 20, double.infinity, 20, 1);
+                List<LinearData> peaks = FindPeaks(seriesList, 2, double.infinity, 10, 1);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
                 //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
@@ -187,7 +188,35 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Padding(padding: EdgeInsets.all(4.0)),
                     Container(child: Image.file(File(widget.imageFilePath!)), height: 200,),
                     Padding(padding: EdgeInsets.all(4.0)),
+                    Text("Najbliższe dopasowania", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Padding(padding: EdgeInsets.all(18.0)),
+                    FutureBuilder(
+                      future: ComparePeaks(peaks),
+                      builder: (BuildContext context, AsyncSnapshot<List<CompareResult>> snapshot) {
+                        if(snapshot.hasData)
+                        {
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              physics: ClampingScrollPhysics(),
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                    padding: EdgeInsets.fromLTRB(0, 3.0, 0, 3.0),
+                                    child: Text(
+                                      ("${snapshot.data![index].result}" + ' with accuracy ' + "${snapshot.data![index].accuracy}"),
+                                      style: TextStyle(color: Colors.black54, fontSize: 16)
+                                      ,));
+                              });
+                        }
+                        else if(snapshot.hasError){
+                        return Text("Something went wrong\n" + snapshot.error.toString());
+                        }
 
+                        else{
+                        return SizedBox(width: 100, height: 100, child: const CircularProgressIndicator());
+                        }
+                      }
+                    )
                   ],
                 );
               }
