@@ -50,6 +50,10 @@ class AlgorithmFactory {
   Set<List<double>> chooseCoefficients(){
     var relativePosToWavelengthFunctionCoefficients, inverseRelativePosToWavelengthFunctionCoefficients;
     switch(grating){
+      case Grating.grating0:
+        relativePosToWavelengthFunctionCoefficients = [400.0, 300.0];
+        inverseRelativePosToWavelengthFunctionCoefficients = [-1.3333333, 0.00333333];
+        break;
       case Grating.grating625CD: //CD
         relativePosToWavelengthFunctionCoefficients = [399.99971260114154,331.63465261047116, -27.547973040830968, -5.454094494323559, 1.3680989208162249];
         inverseRelativePosToWavelengthFunctionCoefficients = [-1.1047170070525247, 0.002506383433519993, 7.886494958025243e-07, -7.347700534902981e-10, 8.989102013574446e-13];
@@ -79,6 +83,7 @@ enum Algorithm {
 }
 
 enum Grating {
+  grating0,
   grating1000,
   grating625CD,
   grating1350DVD

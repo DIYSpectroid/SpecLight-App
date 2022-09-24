@@ -45,7 +45,7 @@ dependencies:
   image_cropper: 1.4.1
   charts_flutter:
     git:
-      url: git://github.com/google/charts.git
+      url: https://github.com/google/charts
       path: charts_flutter
 
 dependency_overrides:
