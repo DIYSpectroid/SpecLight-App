@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../analysis_page.dart';
 
@@ -21,7 +22,7 @@ class CompareResult{
     }
 }
 
-Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks) async {
+Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks, SharedPreferences prefs) async {
 
     List<CompareResult> result = <CompareResult>[]; // final result which will be displayed in app
 
@@ -50,11 +51,11 @@ Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks) async {
                 pow((json[i]["peaks"][j]["intensity"] - closestMatch.y).abs(), 2) )as double;
             cumulatedAccuracy += currentAccuracy;
         }*/
-        for(int j = 0; j < peaks.length; j++) // second iteration (by peaks in file)
+        for(int j = 0; j < peaks.length; j++) // second iteration (by peaks from photo)
             {
             LinearData closestMatch = new LinearData(-1, -1);
             double difference = double.infinity; // create something that always will be beaten by others
-            for(int h = 0; h < json[i]["peaks"].length; h++) // third iteration (by peaks from photo)
+            for(int h = 0; h < json[i]["peaks"].length; h++) // third iteration (by peaks in data)
                 {
                 double currentDifference = ((json[i]["peaks"][h]["wavelength"].toDouble()) - peaks[j].x).abs(); // calculating difference between photo and file peaks to determine which two we can compare
                 if(currentDifference < difference)
@@ -69,7 +70,7 @@ Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks) async {
                 pow((peaks[j].y - closestMatch.y).abs(), 2)) as double;
             cumulatedAccuracy += currentAccuracy;
         }
-        unconvertedResults.add(new CompareResult(i, cumulatedAccuracy, json[i]["example_photo"], json[i]["name_" + "en"], json[i]["class"]));
+        unconvertedResults.add(new CompareResult(i, cumulatedAccuracy, json[i]["example_photo"], json[i]["name_" + prefs.getString('language')!], json[i]["class"]));
         cumulatedAccuracy = 0;
     }
 

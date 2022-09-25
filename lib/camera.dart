@@ -4,15 +4,17 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/rhombus.dart';
 import 'crop_image.dart';
 import 'new_ui_components.dart';
 
 class CameraPage extends StatefulWidget {
 
-  const CameraPage({Key? key, required this.camera, required this.chooseID}) : super(key: key);
+  const CameraPage({Key? key, required this.camera, required this.chooseID, required this.prefs}) : super(key: key);
   final CameraDescription camera;
   final ValueNotifier<int> chooseID;
+  final SharedPreferences prefs;
   @override
   State<CameraPage> createState() => _CameraPage();
 }
@@ -61,7 +63,7 @@ class _CameraPage extends State<CameraPage> {
               await Navigator.push((context),
                   MaterialPageRoute(builder:
                       (context) =>
-                      CropPhotoPage(imageFile: File(file.path)),));
+                      CropPhotoPage(imageFile: File(file.path), prefs: widget.prefs),));
             }
           },
               icon: Icon(Icons.photo_library, color: Colors.white))
@@ -111,7 +113,7 @@ class _CameraPage extends State<CameraPage> {
               final image = await _controller.takePicture();
               await Navigator.push((context),
                   MaterialPageRoute(builder:
-                      (context) => CropPhotoPage(imageFile: File(image.path)),));
+                      (context) => CropPhotoPage(imageFile: File(image.path), prefs: widget.prefs),));
             } catch (e) {
               // If an error occurs, log the error to the console.
               print(e);

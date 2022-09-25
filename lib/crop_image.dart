@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'analysis_page.dart';
 import 'image_analysis/alogrithm_factory.dart';
@@ -13,9 +14,10 @@ final ImagePicker picker = ImagePicker();
 
 class CropPhotoPage extends StatefulWidget{
 
-  const CropPhotoPage({Key? key, required this.imageFile}) : super(key: key);
+  const CropPhotoPage({Key? key, required this.imageFile, required this.prefs}) : super(key: key);
 
   final File? imageFile;
+  final SharedPreferences prefs;
 
   @override
   State<CropPhotoPage> createState() => _CropPhotoPageState();
@@ -117,7 +119,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                           onPressed: () {
                             Navigator.push((context),
                                 MaterialPageRoute(builder:
-                                    (context) => CropPhotoPage(imageFile: File(snapshot.data!.path)),));
+                                    (context) => CropPhotoPage(imageFile: File(snapshot.data!.path), prefs: widget.prefs),));
                           },
                           icon: const Icon(Icons.update, size: 18),
                           label: Text(AppLocalizations.of(context)!.retry),
@@ -129,7 +131,7 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                             onPressed: () {
                               Navigator.push((context),
                                   MaterialPageRoute(builder:
-                                      (context) => AnalysisPage(imageFilePath: snapshot.data!.path, algorithm: this.algorithm, grating: this.grating,),));
+                                      (context) => AnalysisPage(imageFilePath: snapshot.data!.path, algorithm: this.algorithm, grating: this.grating, prefs: widget.prefs),));
                             },
                             icon: const Icon(Icons.verified_outlined, size: 18),
                             label: Text(AppLocalizations.of(context)!.next),

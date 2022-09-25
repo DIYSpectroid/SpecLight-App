@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/image_analysis/alogrithm_factory.dart';
 import 'package:spectroid/image_analysis/analysis/spectrable.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
@@ -23,11 +24,12 @@ final ImagePicker picker = ImagePicker();
 
 class AnalysisPage extends StatefulWidget{
 
-  const AnalysisPage({Key? key, required this.imageFilePath, required this.algorithm, required this.grating}) : super(key: key);
+  const AnalysisPage({Key? key, required this.imageFilePath, required this.algorithm, required this.grating, required this.prefs}) : super(key: key);
 
   final String? imageFilePath;
   final Algorithm algorithm;
   final Grating grating;
+  final SharedPreferences prefs;
 
   @override
   State<AnalysisPage> createState() => _AnalysisPageState();
@@ -80,37 +82,27 @@ class _AnalysisPageState extends State<AnalysisPage> {
   late TrackballBehavior _trackballBehavior;
 
   @override
-  void initState() {
+  Widget build(BuildContext context) {
+
     _tooltipBehavior = TooltipBehavior(
         enable: true,
-        header: "Peak",
-        format: 'intensity: point.y%\nwavelength: point.xnm',
-        canShowMarker: false,
-        decimalPlaces: 1,
-        color: Color(0xFFFA7921),
-        textStyle: TextStyle(fontSize: 14),
         builder: (dynamic data, dynamic point, dynamic series,
             int pointIndex, int seriesIndex) {
-                return CustomTooltip(y: point.y, x: point.x);
-            }
+          return CustomTooltip(y: point.y, x: point.x, peak: AppLocalizations.of(context)!.peak, intensity: AppLocalizations.of(context)!.intensity, wavelength: AppLocalizations.of(context)!.wavelength);
+        }
     );
 
     _trackballBehavior = TrackballBehavior(
       // Enables the trackball
         enable: true,
-        lineColor: Color(0xFFFA7921),
         tooltipAlignment: ChartAlignment.center,
         tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
         builder: (BuildContext context, TrackballDetails trackballDetails) {
-          return CustomTrackball(y: trackballDetails.groupingModeInfo?.points[0].yValue, x: trackballDetails.groupingModeInfo?.points[0].xValue);
+          return CustomTrackball(y: trackballDetails.groupingModeInfo?.points[0].yValue, x: trackballDetails.groupingModeInfo?.points[0].xValue, intensity: AppLocalizations.of(context)!.intensity, wavelength: AppLocalizations.of(context)!.wavelength);
         }
 
     );
-    super.initState();
-  }
 
-  @override
-  Widget build(BuildContext context) {
     List<String> categories = <String>[AppLocalizations.of(context)!.category0, AppLocalizations.of(context)!.category1];
     return Scaffold(
       appBar: AppBar(
@@ -187,15 +179,15 @@ class _AnalysisPageState extends State<AnalysisPage> {
                         Padding(padding: EdgeInsets.only(left: 30)),
                       ],
                     ),
-                    Container(child: Divider(color: Colors.black), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
+                    Container(child: Divider(color: Colors.black54), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
                     Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
                     Container(child: Image.file(File(widget.imageFilePath!)), height: 200,),
-                    Container(child: Divider(color: Colors.black), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
-                    Text("Najbliższe dopasowania", textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
+                    Container(child: Divider(color: Colors.black54), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
+                    Text(AppLocalizations.of(context)!.closest_match, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
                     FutureBuilder(
-                      future: ComparePeaks(peaks),
+                      future: ComparePeaks(peaks, widget.prefs),
                       builder: (BuildContext context, AsyncSnapshot<List<CompareResult>> snapshot) {
                         if(snapshot.hasData)
                         {
@@ -211,7 +203,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
                                     Theme.of(context).accentColor.withAlpha(30),
                                     //ADD ON PRESS
                                     onTap: () {
-
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => OverviewPage(index: snapshot.data![index].result, prefs: widget.prefs)),
+                                      );
                                     },
                                     child:
                                     Row(
@@ -219,7 +214,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                                         Expanded(child: Container(height: 10,)),
                                         Column(
                                           children: [
-                                            Text("Error", style: TextStyle(fontSize: 14, color: Colors.black54)),
+                                            Text(AppLocalizations.of(context)!.error, style: TextStyle(fontSize: 14, color: Colors.black54)),
                                             Text(snapshot.data![index].accuracy.toString(), style: TextStyle(fontSize: 20, color: Colors.black)),
                                           ]
                                         ),
@@ -255,7 +250,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                               });
                         }
                         else if(snapshot.hasError){
-                        return Text("Something went wrong\n" + snapshot.error.toString());
+                        return Text(AppLocalizations.of(context)!.error_message + "\n" + snapshot.error.toString());
                         }
 
                         else{
@@ -267,7 +262,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                 );
               }
               else if(snapshot.hasError){
-                return Text("Something went wrong\n" + snapshot.error.toString());
+                return Text(AppLocalizations.of(context)!.error_message + "\n" + snapshot.error.toString());
               }
 
                else{

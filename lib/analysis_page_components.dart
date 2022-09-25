@@ -4,11 +4,16 @@ class CustomTooltip extends StatelessWidget {
 
   final double y;
   final double x;
-
+  String peak;
+  String intensity;
+  String wavelength;
 
   CustomTooltip({
     required this.y,
     required this.x,
+    required this.peak,
+    required this.intensity,
+    required this.wavelength
   });
 
   @override
@@ -20,14 +25,14 @@ class CustomTooltip extends StatelessWidget {
       child: Column(
         children: [
           Expanded(child: Container(width: 150,)),
-          Text("Peak", style: TextStyle(
+          Text(peak, style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold)),
           SizedBox(
               width: 140, child: Divider(color: Colors.white, thickness: 1)),
-          Text("intensity: " + y.toStringAsFixed(1) + "%",
+          Text(intensity + ": " + y.toStringAsFixed(1) + "%",
               style: TextStyle(color: Colors.white)),
           SizedBox(height: 2,),
-          Text("wavelength: " + x.toStringAsFixed(1) + "nm",
+          Text(wavelength + ": " + x.toStringAsFixed(1) + "nm",
             style: TextStyle(color: Colors.white),),
           Expanded(child: Container(width: 150,)),
         ],
@@ -40,11 +45,15 @@ class CustomTrackball extends StatelessWidget {
 
   final double y;
   final double x;
+  String intensity;
+  String wavelength;
 
 
   CustomTrackball({
     required this.y,
     required this.x,
+    required this.intensity,
+    required this.wavelength
   });
 
   @override
@@ -56,9 +65,9 @@ class CustomTrackball extends StatelessWidget {
       child: Column(
         children: [
           Expanded(child: Container(width: 150,)),
-          Text("intensity: " + y.toStringAsFixed(1)  + "%", style: TextStyle(color: Colors.white)),
+          Text(intensity + ": " + y.toStringAsFixed(1)  + "%", style: TextStyle(color: Colors.white)),
           Expanded(child: Container(width: 150,)),
-          Text( "wavelength: " + x.toStringAsFixed(1) + "nm", style: TextStyle(color: Colors.white),),
+          Text(wavelength + ": " + x.toStringAsFixed(1) + "nm", style: TextStyle(color: Colors.white),),
           Expanded(child: Container(width: 150,)),
         ],
       ),

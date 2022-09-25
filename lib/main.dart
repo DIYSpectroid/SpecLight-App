@@ -123,7 +123,7 @@ class _MainPage extends State<MainPage> {
             return IndexedStack(
                 index: value,
                 children: [
-                  CameraPage(camera: widget.camera, chooseID: widget.chooseID),
+                  CameraPage(camera: widget.camera, chooseID: widget.chooseID, prefs: widget.prefs),
                   LibraryPage(chooseID: widget.chooseID, prefs: widget.prefs),
                   ResorcesPage(chooseID: widget.chooseID),
                   LanguageChange(chooseID: widget.chooseID)
