@@ -20,13 +20,13 @@ class HueConversionData{
   static int minFromOtherSide = 360;
 
   static void initialize(bool wiki) async {
-    var atomsNames = await rootBundle.loadString("assets/lines_images/AtomsNames.txt");
+    var atomsNames = await rootBundle.loadString("assets/lines_images/atomsNames.txt");
     Iterable<String> atomNames = atomsNames.split("\n")
         .map((e) => e.trim())
         .where((element) => element.length > 0);
     for(String atomName in atomNames) {
       print(atomName);
-      await _createImageAnalysisFile("${atomName}Lines");
+      await _createImageAnalysisFile("${atomName}");
     }
 
     final String jsonData;
@@ -133,7 +133,7 @@ class HueConversionData{
     StringBuffer stringToSave = new StringBuffer();
     spectrum?.forEach((key, value) {stringToSave.write("$key: $value\n");});
 
-    File fileToSave = new File("$dirPath/${imageName}Data.txt");
+    File fileToSave = new File("$dirPath/${imageName}_data.txt");
     fileToSave.writeAsString(stringToSave.toString());
     fileToSave.create();
   }

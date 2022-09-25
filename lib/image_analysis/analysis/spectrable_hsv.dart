@@ -27,7 +27,7 @@ class SpectrableHSV extends Spectrable {
   }
 
   void updateSpectrumSumOfValueOverSaturation(double wavelength, HSVPixel pixel){
-    if(spectrum[wavelength] == null){
+    if(!spectrum.containsKey(wavelength)){
       spectrum[wavelength] = 0;
     }
     spectrum[wavelength] = spectrum[wavelength]! + pixel.value.toDouble()/pixel.saturation.toDouble();
