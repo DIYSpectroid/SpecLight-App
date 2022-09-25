@@ -7,15 +7,22 @@ import '../analysis_page.dart';
 class CompareResult{
     late int result;
     late double accuracy;
+    late String photo;
+    late String name;
+    late int category;
 
-    CompareResult(int result, double accuracy)
+    CompareResult(int result, double accuracy, String photo, String name, int category)
     {
         this.result = result;
         this.accuracy = accuracy;
+        this.photo = photo;
+        this.name = name;
+        this.category = category;
     }
 }
 
 Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks) async {
+
     List<CompareResult> result = <CompareResult>[]; // final result which will be displayed in app
 
     String jsonString = await rootBundle.loadString('assets/testspectra.json'); // we load json so we can compare with it
@@ -45,38 +52,30 @@ Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks) async {
         }*/
         for(int j = 0; j < peaks.length; j++) // second iteration (by peaks in file)
             {
-                print("dupa1");
             LinearData closestMatch = new LinearData(-1, -1);
             double difference = double.infinity; // create something that always will be beaten by others
-                print("dupa2");
             for(int h = 0; h < json[i]["peaks"].length; h++) // third iteration (by peaks from photo)
                 {
-                print("dupa69");
-                double currentDifference = ((json[i]["peaks"][h]["wavelength"].toDouble()) - peaks[j].x).abs();
-                print("dupa3");// calculating difference between photo and file peaks to determine which two we can compare
+                double currentDifference = ((json[i]["peaks"][h]["wavelength"].toDouble()) - peaks[j].x).abs(); // calculating difference between photo and file peaks to determine which two we can compare
                 if(currentDifference < difference)
                 {
                     difference = currentDifference;
-                    print("dupa4");
                     double x = json[i]["peaks"][h]["wavelength"].toDouble();
-                    print("dupa44");
                     double y = json[i]["peaks"][h]["intensity"].toDouble();
-                    print("dupa444");
                     closestMatch = new LinearData(x, y);
-                    print("dupa5");
                 }
             }
-            print("dupa2137");
-            double currentAccuracy = (pow((peaks[j].x - closestMatch.x).abs(), 3) +
-                pow((peaks[j].y - closestMatch.y).abs(), 3) ) as double;
-            print("duppa");
+            double currentAccuracy = (pow((peaks[j].x - closestMatch.x).abs(), 2) +
+                pow((peaks[j].y - closestMatch.y).abs(), 2)) as double;
             cumulatedAccuracy += currentAccuracy;
         }
-        unconvertedResults.add(new CompareResult(i, cumulatedAccuracy));
+        unconvertedResults.add(new CompareResult(i, cumulatedAccuracy, json[i]["example_photo"], json[i]["name_" + "en"], json[i]["class"]));
         cumulatedAccuracy = 0;
     }
 
     unconvertedResults.sort((a, b) => a.accuracy.compareTo(b.accuracy));
+
+    unconvertedResults.forEach((element) {element.accuracy = element.accuracy.floorToDouble() / 100;});
 
     result = unconvertedResults;
 

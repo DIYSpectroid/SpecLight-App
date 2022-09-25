@@ -113,7 +113,7 @@
         "name_cn" : "氯",
         "class" : 0,
         "wikipedia_page" : "https://en.wikipedia.org/wiki/Hydrogen",
-        "example_photo" : "assets/chlorineLines.png",
+        "example_photo" : "assets/hydrogenLines.png",
         "peaks" : [
             {"wavelength" : 397.01, "intensity":4.4444},
             {"wavelength" : 410.17, "intensity":8.3333},
@@ -132,7 +132,7 @@
         "name_cn" : "氯",
         "class" : 0,
         "wikipedia_page" : "https://en.wikipedia.org/wiki/Iron",
-        "example_photo" : "assets/chlorineLines.png",
+        "example_photo" : "assets/ironLines.png",
         "peaks" : [
             {"wavelength" : 400.52, "intensity":10},
             {"wavelength" : 402.19, "intensity":2.5},
@@ -216,7 +216,7 @@
         "name_cn" : "氯",
         "class" : 0,
         "wikipedia_page" : "https://en.wikipedia.org/wiki/Neptunium",
-        "example_photo" : "assets/chlorineLines.png",
+        "example_photo" : "assets/neptuniumLines.png",
         "peaks" : [
             {"wavelength": 504.47, "intensity": 10},
             {"wavelength": 560.17, "intensity": 10},

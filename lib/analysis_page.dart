@@ -17,6 +17,8 @@ import 'numerical_analysis/compare_peaks.dart';
 import 'numerical_analysis/find_peaks.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import 'overview.dart';
+
 final ImagePicker picker = ImagePicker();
 
 class AnalysisPage extends StatefulWidget{
@@ -106,8 +108,10 @@ class _AnalysisPageState extends State<AnalysisPage> {
     );
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
+    List<String> categories = <String>[AppLocalizations.of(context)!.category0, AppLocalizations.of(context)!.category1];
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.analysis_header, style: TextStyle(color: Colors.white),),
@@ -183,13 +187,13 @@ class _AnalysisPageState extends State<AnalysisPage> {
                         Padding(padding: EdgeInsets.only(left: 30)),
                       ],
                     ),
-                    Padding(padding: EdgeInsets.all(18.0)),
-                    Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Container(child: Divider(color: Colors.black), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
+                    Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
                     Container(child: Image.file(File(widget.imageFilePath!)), height: 200,),
+                    Container(child: Divider(color: Colors.black), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
+                    Text("Najbliższe dopasowania", textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
-                    Text("Najbliższe dopasowania", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),),
-                    Padding(padding: EdgeInsets.all(18.0)),
                     FutureBuilder(
                       future: ComparePeaks(peaks),
                       builder: (BuildContext context, AsyncSnapshot<List<CompareResult>> snapshot) {
@@ -200,12 +204,54 @@ class _AnalysisPageState extends State<AnalysisPage> {
                               physics: ClampingScrollPhysics(),
                               itemCount: snapshot.data!.length,
                               itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                    padding: EdgeInsets.fromLTRB(0, 3.0, 0, 3.0),
-                                    child: Text(
-                                      ("${snapshot.data![index].result}" + ' with accuracy ' + "${snapshot.data![index].accuracy}"),
-                                      style: TextStyle(color: Colors.black54, fontSize: 16)
-                                      ,));
+                                return Card(
+                                  margin: EdgeInsets.fromLTRB(50, 0, 50, 20),
+                                  child: InkWell(
+                                    splashColor:
+                                    Theme.of(context).accentColor.withAlpha(30),
+                                    //ADD ON PRESS
+                                    onTap: () {
+
+                                    },
+                                    child:
+                                    Row(
+                                      children: [
+                                        Expanded(child: Container(height: 10,)),
+                                        Column(
+                                          children: [
+                                            Text("Error", style: TextStyle(fontSize: 14, color: Colors.black54)),
+                                            Text(snapshot.data![index].accuracy.toString(), style: TextStyle(fontSize: 20, color: Colors.black)),
+                                          ]
+                                        ),
+                                        Expanded(child: Container(height: 10,)),
+                                        Column(
+                                          children: [
+                                            Container(height: 10),
+                                            Image.asset(snapshot.data![index].photo, height: 80),
+                                            Container(height: 5),
+                                            Container(
+                                              padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+                                              child: Align(
+                                                  child: Text(snapshot.data![index].name,
+                                                      style: TextStyle(fontSize: 20, color: Colors.black)),
+                                                  alignment: Alignment.centerLeft),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 0),
+                                              child: Align(
+                                                  child: Text(
+                                                      categories[snapshot.data![index].category],
+                                                      style: TextStyle(fontSize: 14, color: Colors.black54)),
+                                                  alignment: Alignment.centerLeft),
+                                            ),
+                                            Container(height: 10)
+                                          ],
+                                        ),
+                                        Container(width: 10)
+                                      ],
+                                    ),
+                                  ),
+                                );;
                               });
                         }
                         else if(snapshot.hasError){

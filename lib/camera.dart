@@ -61,7 +61,7 @@ class _CameraPage extends State<CameraPage> {
               await Navigator.push((context),
                   MaterialPageRoute(builder:
                       (context) =>
-                      CropPhotoPage(imageFile: File(file!.path)),));
+                      CropPhotoPage(imageFile: File(file.path)),));
             }
           },
               icon: Icon(Icons.photo_library, color: Colors.white))
