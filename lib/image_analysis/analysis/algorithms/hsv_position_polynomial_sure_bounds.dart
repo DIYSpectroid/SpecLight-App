@@ -84,12 +84,12 @@ class HSVPositionPolynomialSureBounds extends PolynomialPositionSpectrableHSV  {
       }
       pixelBounds--;
     }
-    while(firstLightPositionX == lastLightPositionX && pixelBounds >= 0);
+    while(!_areBoundsOk(firstLightPositionX, lastLightPositionX, imageData.width) && pixelBounds >= 0);
 
     double firstLightWavelength = wavelengthMin.toDouble();
     double lastLightWavelength = wavelengthMax.toDouble();
 
-    if(firstLightPixel == null || lastLightPixel == null || firstLightPositionX == lastLightPixel) {
+    if(firstLightPixel == null || lastLightPixel == null || !_areBoundsOk(firstLightPositionX, lastLightPositionX, imageData.width)) {
       return SpectrumPositionBounds(0 ,imageData.width, SpectrablesMetadata.WAVELENGTH_MIN, SpectrablesMetadata.WAVELENGTH_MAX);
     }
 
@@ -108,5 +108,11 @@ class HSVPositionPolynomialSureBounds extends PolynomialPositionSpectrableHSV  {
     }
 
     return SpectrumPositionBounds(firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength);
+  }
+
+  static const double Min_Relative_Bounds_Distance_On_Image = 0.5;
+  bool _areBoundsOk(int firstLightPositionX, int lastLightPositionX, int imageWidth)
+  {
+    return (lastLightPositionX - firstLightPositionX)/imageWidth >= Min_Relative_Bounds_Distance_On_Image;
   }
 }
