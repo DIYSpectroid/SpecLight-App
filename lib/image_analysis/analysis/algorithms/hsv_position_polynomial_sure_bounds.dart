@@ -38,19 +38,19 @@ class HSVPositionPolynomialSureBounds extends PolynomialPositionSpectrableHSV  {
   SpectrumPositionBounds getSpectrumBounds() {
 
     int pixelBounds = PixelsOnEachSide;
-    int firstLightPositionX = imageData.width;
-    HSVPixel? firstLightPixel;
-    int lastLightPositionX = 0;
-    HSVPixel? lastLightPixel;
 
-    double firstLightWavelength = wavelengthMin.toDouble();
-    double lastLightWavelength = wavelengthMax.toDouble();
+    HSVPixel? firstLightPixel;
+    HSVPixel? lastLightPixel;
+    int firstLightPositionX = imageData.width;
+    int lastLightPositionX = 0;
 
     List<bool> valids = List.generate(imageData.width, (index) => false);
 
     do{
       int currentPositionX = 0;
       int currentPositionY = 0;
+      firstLightPositionX = imageData.width;
+      lastLightPositionX = 0;
       for (HSVPixel pixel in imageData.hsvPixels) {
         valids[currentPositionX] = isHSVPixelValid(pixel) && isPixelXYZRatioUnique(linearHueToWavelength(pixel.hue));
         currentPositionX++;
@@ -86,6 +86,8 @@ class HSVPositionPolynomialSureBounds extends PolynomialPositionSpectrableHSV  {
     }
     while(firstLightPositionX == lastLightPositionX && pixelBounds >= 0);
 
+    double firstLightWavelength = wavelengthMin.toDouble();
+    double lastLightWavelength = wavelengthMax.toDouble();
 
     if(firstLightPixel == null || lastLightPixel == null || firstLightPositionX == lastLightPixel) {
       return SpectrumPositionBounds(0 ,imageData.width, SpectrablesMetadata.WAVELENGTH_MIN, SpectrablesMetadata.WAVELENGTH_MAX);
