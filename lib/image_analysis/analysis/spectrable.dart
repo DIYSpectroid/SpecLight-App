@@ -28,9 +28,9 @@ class Spectrable {
 
   void normalizeAndSampleSpectrumValues(){
     Map<double, double> newSpectrum = {};
-    for(double i = wavelengthMin; i <= wavelengthMax; i += 1) {
-      newSpectrum[i] = 0;
-    }
+    // for(double i = wavelengthMin; i <= wavelengthMax; i += 1) {
+    //   newSpectrum[i] = 0;
+    // }
 
     for(double wavelength in spectrum.keys){
       double roundedWavelength = wavelength.round().toDouble();
