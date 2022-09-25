@@ -1,5 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:image/image.dart' as Img;
+import 'package:path_provider/path_provider.dart';
+import 'package:spectroid/image_analysis/analysis/spectrable.dart';
+import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
+
+import '../alogrithm_factory.dart';
+import 'image_data_extraction.dart';
 
 
 class HueConversionData{
@@ -10,6 +20,15 @@ class HueConversionData{
   static int minFromOtherSide = 360;
 
   static void initialize(bool wiki) async {
+    var atomsNames = await rootBundle.loadString("assets/lines_images/atomsNames.txt");
+    Iterable<String> atomNames = atomsNames.split("\n")
+        .map((e) => e.trim())
+        .where((element) => element.length > 0);
+    for(String atomName in atomNames) {
+      print(atomName);
+      await _createImageAnalysisFile("${atomName}");
+    }
+
     final String jsonData;
     if(!wiki) {
       jsonData = await _loadAsset();
@@ -103,8 +122,42 @@ class HueConversionData{
   }
 
   static Future<String> _loadAssetWiki() async {
-    String string = await rootBundle.loadString('assets/spectrumWiki.json');
+    return await rootBundle.loadString('assets/spectrumWiki.json');
+  }
 
-    return string;
+  static Future<void> _createImageAnalysisFile(String imageName) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String dirPath = "${directory.path}";
+
+    var spectrum = (await _getLineImageSpectrum("${imageName}.png"))?.spectrum;
+    StringBuffer stringToSave = new StringBuffer();
+    spectrum?.forEach((key, value) {stringToSave.write("$key: $value\n");});
+
+    File fileToSave = new File("$dirPath/${imageName}_data.txt");
+    fileToSave.writeAsString(stringToSave.toString());
+    fileToSave.create();
+  }
+
+  static Future<Spectrable?> _getLineImageSpectrum(String imageName) async {
+      ByteData byteData = await rootBundle.load("assets/lines_images/$imageName");
+
+      Uint8List audioUint8List = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
+      List<int> values = audioUint8List.map((eachUint8) => eachUint8.toInt()).toList();
+      Img.Image image = Img.decodeImage(values)!;
+
+      ImageData imageData = ImageData("", image.data, image.height, image.width);
+      await imageData.extractData();
+
+      Spectrable? spectrumGenerator = AlgorithmFactory()
+          .setAlgorithm(Algorithm.hsvPositionPolynomialSureBounds)
+          .setGrating(Grating.grating0)
+          .setImageData(imageData)
+          .create();
+
+      if(spectrumGenerator == null) {
+        throw new Exception("Something went wrong");
+      }
+      spectrumGenerator.generateSpectrum();
+      return spectrumGenerator;
   }
 }
