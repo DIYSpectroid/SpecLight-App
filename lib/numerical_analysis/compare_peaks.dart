@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../analysis_page.dart';
@@ -22,11 +24,23 @@ class CompareResult{
     }
 }
 
-Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks, SharedPreferences prefs) async {
+Future<List<CompareResult>> ComputePeaks(Map map) async{
+    await WidgetsFlutterBinding.ensureInitialized();
+    String jsonString = await rootBundle.loadString('assets/testspectra.json');
+    map["json"] = jsonString;
+    List<CompareResult> results = await compute(ComparePeaks, map);
+    return results;
+}
+
+List<CompareResult> ComparePeaks(Map map) {
+
+    List<LinearData> peaks = map['peaks'];
+    SharedPreferences prefs = map['prefs'];
+    var jsonString = map['json'];
 
     List<CompareResult> result = <CompareResult>[]; // final result which will be displayed in app
 
-    String jsonString = await rootBundle.loadString('assets/testspectra.json'); // we load json so we can compare with it
+     // we load json so we can compare with it
     List<dynamic> json = jsonDecode(jsonString);
 
     List<CompareResult> unconvertedResults = <CompareResult>[]; // results before sorting, normalizing etc.
@@ -66,6 +80,8 @@ Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks, SharedPreferenc
                     closestMatch = new LinearData(x, y);
                 }
             }
+
+
             double currentAccuracy = (pow((peaks[j].x - closestMatch.x).abs(), 2) +
                 pow((peaks[j].y - closestMatch.y).abs(), 2)) as double;
             cumulatedAccuracy += currentAccuracy;
@@ -76,7 +92,9 @@ Future<List<CompareResult>> ComparePeaks(List<LinearData> peaks, SharedPreferenc
 
     unconvertedResults.sort((a, b) => a.accuracy.compareTo(b.accuracy));
 
-    unconvertedResults.forEach((element) {element.accuracy = element.accuracy.floorToDouble() / 100;});
+
+
+    unconvertedResults.forEach((element) {element.accuracy = (100.0 - element.accuracy / unconvertedResults[unconvertedResults.length-1].accuracy * 100).floorToDouble();});
 
     result = unconvertedResults;
 

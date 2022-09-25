@@ -77,7 +77,6 @@ class _AnalysisPageState extends State<AnalysisPage> {
   double chosen_x = 0;
   double chosen_y = 0;
 
-
   late TooltipBehavior _tooltipBehavior;
   late TrackballBehavior _trackballBehavior;
 
@@ -118,7 +117,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
             builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
                 List<LinearData> seriesList = createPlotData(snapshot.data!);
-                List<LinearData> peaks = FindPeaks(seriesList, 2, double.infinity, 10, 1);
+                List<LinearData> peaks = FindPeaks(seriesList, 2, double.infinity, 2, 0);
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
                 //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
@@ -187,7 +186,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Text(AppLocalizations.of(context)!.closest_match, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
                     FutureBuilder(
-                      future: ComparePeaks(peaks, widget.prefs),
+
+                      future: ComputePeaks({'peaks': peaks, 'prefs': widget.prefs}),
                       builder: (BuildContext context, AsyncSnapshot<List<CompareResult>> snapshot) {
                         if(snapshot.hasData)
                         {
@@ -252,7 +252,6 @@ class _AnalysisPageState extends State<AnalysisPage> {
                         else if(snapshot.hasError){
                         return Text(AppLocalizations.of(context)!.error_message + "\n" + snapshot.error.toString());
                         }
-
                         else{
                         return SizedBox(width: 100, height: 100, child: const CircularProgressIndicator());
                         }
