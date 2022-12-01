@@ -121,15 +121,8 @@ class ResorcesPage extends StatelessWidget {
                       imageSize: 35,
                       label: "Facebook",
                       color: Color(0xFFbb8000),
-                      onPressed: (){},
-                    ),
-                    ImageButton(
-                      imagePath: "assets/instagramOrange.png",
-                      imageSize: 35,
-                      label: "Instagram",
-                      color: Color(0xFFbb8000),
                       onPressed: () async{
-                        Uri url = Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                        Uri url = Uri.parse("https://www.facebook.com/profile.php?id=100076116576037");
                         if(await canLaunchUrl(url)){
                           await launchUrl(url, mode: launchMode);
                         }else {
@@ -138,18 +131,32 @@ class ResorcesPage extends StatelessWidget {
                       },
                     ),
                     ImageButton(
+                      imagePath: "assets/instagramOrange.png",
+                      imageSize: 35,
+                      label: "Instagram",
+                      color: Color(0xFFbb8000),
+                      onPressed: null,
+                    ),
+                    ImageButton(
                       imagePath: "assets/linkedinOrange.png",
                       imageSize: 35,
                       label: "Linkedin",
                       color: Color(0xFFbb8000),
-                      onPressed: (){},
+                      onPressed: () async{
+                        Uri url = Uri.parse("https://www.linkedin.com/company/skn-hexa/");
+                        if(await canLaunchUrl(url)){
+                          await launchUrl(url, mode: launchMode);
+                        }else {
+                          throw 'Could not launch $url';
+                        }
+                      },
                     ),
                     ImageButton(
                       imagePath: "assets/twitterOrange.png",
                       imageSize: 35,
                       label: "Twitter",
                       color: Color(0xFFbb8000),
-                      onPressed: (){},
+                      onPressed: null,
                     ),
               ],
             ),
