@@ -29,9 +29,10 @@ class CropPhotoPage extends StatefulWidget{
 class _CropPhotoPageState extends State<CropPhotoPage> {
 
   CroppedFile? croppedFile;
-  Algorithm algorithm = Algorithm.hsvPositionPolynomial;
+  Algorithm algorithm = Algorithm.hsvPositionPolynomialSureBounds;
   Grating grating = Grating.grating1000;
   late final Future<CroppedFile>? temp = cropImage();
+
 
   Future<CroppedFile> cropImage() async {
       croppedFile = await ImageCropper.platform.cropImage(
@@ -59,6 +60,15 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
   @override
   Widget build(BuildContext context) {
 
+    if(widget.prefs.containsKey("grating"))
+    {
+      grating = Grating.values[widget.prefs.getInt("grating")!];
+    }
+    else
+    {
+      widget.prefs.setInt("grating", Grating.grating1000.index);
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(
@@ -77,32 +87,6 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
                 Expanded(
                   child: ListView(
                     children: [
-                      DropdownButton<Algorithm>(
-                        value: algorithm,
-                        onChanged: (Algorithm? newValue) {
-                          setState(() {
-                            algorithm = newValue!;
-                          });
-                        },
-                        items: Algorithm.values.map((Algorithm classType) {
-                          return DropdownMenuItem<Algorithm>(
-                              value: classType,
-                              child: Text(classType.toString()));
-                        }).toList()
-                      ),
-                      DropdownButton<Grating>(
-                          value: grating,
-                          onChanged: (Grating? newValue) {
-                            setState(() {
-                              grating = newValue!;
-                            });
-                          },
-                          items: Grating.values.map((Grating classType) {
-                            return DropdownMenuItem<Grating>(
-                                value: classType,
-                                child: Text(classType.toString()));
-                          }).toList()
-                      ),
                       FittedBox(
                         fit: BoxFit.contain,
                         child: Image.file(File(snapshot.data!.path)),

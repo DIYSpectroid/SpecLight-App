@@ -117,7 +117,16 @@ class _AnalysisPageState extends State<AnalysisPage> {
             builder: (BuildContext context, AsyncSnapshot<Spectrable?> snapshot) {
               if(snapshot.hasData){
                 List<LinearData> seriesList = createPlotData(snapshot.data!);
-                List<LinearData> peaks = FindPeaks(seriesList, 2, double.infinity, 2, 0);
+                List<LinearData> peaks;
+                if(widget.grating == Grating.grating0) {
+                  peaks = FindPeaks(
+                      seriesList, 0, double.infinity, 0, 0);
+                }
+                else
+                {
+                  peaks = FindPeaks(
+                      seriesList, 2, double.infinity, 2, 0);
+                }
                 //List<double> sortedWavelength = spectrum.spectrum.keys.toList();
                 //sortedWavelength.sort((a, b) => a.compareTo(b));
                 //FindPeaks(snapshot.data!.spectrum, 5, double.infinity).forEach((element) {print("Extreme at x: ${element.x}, with y: ${element.y}"); });
@@ -181,7 +190,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Container(child: Divider(color: Colors.black54), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
                     Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
-                    Container(child: Image.file(File(widget.imageFilePath!)), height: 200,),
+                    Container(child: Image.file(File(widget.imageFilePath!)),),
                     Container(child: Divider(color: Colors.black54), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
                     Text(AppLocalizations.of(context)!.closest_match, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),

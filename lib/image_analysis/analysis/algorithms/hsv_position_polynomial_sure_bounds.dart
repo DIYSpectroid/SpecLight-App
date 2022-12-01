@@ -110,7 +110,7 @@ class HSVPositionPolynomialSureBounds extends PolynomialPositionSpectrableHSV  {
     return SpectrumPositionBounds(firstLightPositionX ,lastLightPositionX, firstLightWavelength, lastLightWavelength);
   }
 
-  static const double Min_Relative_Bounds_Distance_On_Image = 0.5;
+  static const double Min_Relative_Bounds_Distance_On_Image = 0.4;
   bool _areBoundsOk(int firstLightPositionX, int lastLightPositionX, int imageWidth)
   {
     return (lastLightPositionX - firstLightPositionX)/imageWidth >= Min_Relative_Bounds_Distance_On_Image;

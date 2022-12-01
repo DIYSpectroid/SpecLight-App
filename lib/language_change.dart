@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'image_analysis/alogrithm_factory.dart';
+import 'image_analysis/grating_settings.dart';
 import 'main.dart';
 import 'new_ui_components.dart';
 import 'package:provider/provider.dart';
@@ -17,15 +19,36 @@ class AppLocale extends ChangeNotifier {
   }
 }
 
-class LanguageChange extends StatelessWidget {
-  LanguageChange({Key? key, required this.chooseID}) : super(key: key);
+class LanguageChange extends StatefulWidget{
+
+  LanguageChange({Key? key, required this.chooseID, required this.prefs}) : super(key: key);
+
   ValueNotifier<int> chooseID;
+  final SharedPreferences prefs;
+
+  @override
+  State<LanguageChange> createState() => _LanguageChangeState();
+
+}
+
+class _LanguageChangeState extends State<LanguageChange> {
+
+  Grating grating = Grating.grating1000;
 
   @override
   Widget build(BuildContext context) {
     void _setLanguage(String language) async {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('language', language);
+    }
+
+    if(widget.prefs.containsKey("grating"))
+    {
+      grating = Grating.values[widget.prefs.getInt("grating")!];
+    }
+    else
+    {
+      widget.prefs.setInt("grating", Grating.grating1000.index);
     }
 
     var language = Provider.of<AppLocale>(context);
@@ -61,28 +84,21 @@ class LanguageChange extends StatelessWidget {
                 imageSize: 35,
               ),
               Padding(padding: EdgeInsets.all(spacing)),
-              ImageButton(
-                imagePath: "assets/ukraine.png",
-                label: "Український",
-                imageSize: 35,
-              ),
-              Padding(padding: EdgeInsets.all(spacing)),
-              ImageButton(
-                imagePath: "assets/germany.png",
-                label: "Deutsch",
-                imageSize: 35,
-              ),
-              Padding(padding: EdgeInsets.all(spacing)),
-              ImageButton(
-                imagePath: "assets/france.png",
-                label: "Français",
-                imageSize: 35,
-              ),
-              Padding(padding: EdgeInsets.all(spacing)),
-              ImageButton(
-                imagePath: "assets/china.png",
-                label: "中文",
-                imageSize: 35,
+              Text(AppLocalizations.of(context)!.choose_const, style: TextStyle(fontSize: 18)),
+              DropdownButton<Grating>(
+                  value: grating,
+                  isExpanded: true,
+                  onChanged: (Grating? newValue) {
+                    setState(() {
+                      grating = newValue!;
+                      widget.prefs.setInt("grating", newValue.index);
+                    });
+                  },
+                  items: Grating.values.map((Grating classType) {
+                    return DropdownMenuItem<Grating>(
+                        value: classType,
+                        child: Text(GratingToString[classType]!));
+                  }).toList()
               ),
             ]),
       ),
@@ -101,14 +117,14 @@ class LanguageChange extends StatelessWidget {
                         .of(context)
                         .primaryColor,
                     id: 0,
-                    currentID: chooseID),
+                    currentID: widget.chooseID),
                 BottomTab(icon: Icons.photo_library,
                     label: AppLocalizations.of(context)!.examples,
                     color: Theme
                         .of(context)
                         .primaryColor,
                     id: 1,
-                    currentID: chooseID),
+                    currentID: widget.chooseID),
                 SizedBox(width: 50), // The dummy child
                 BottomTab(icon: Icons.more_horiz,
                     label: AppLocalizations.of(context)!.resources,
@@ -116,14 +132,14 @@ class LanguageChange extends StatelessWidget {
                         .of(context)
                         .primaryColor,
                     id: 2,
-                    currentID: chooseID),
+                    currentID: widget.chooseID),
                 BottomTab(icon: Icons.settings,
                     label: AppLocalizations.of(context)!.settings,
                     color: Theme
                         .of(context)
                         .primaryColor,
                     id: 3,
-                    currentID: chooseID),
+                    currentID: widget.chooseID),
               ],
             ),
           )),

@@ -8,7 +8,7 @@
   "settings": "Ustawienia",
   "website": "Strona",
   "credits": "Twórcy",
-  "choose_language": "Język",
+  "choose_language": "Ustawienia",
   "camera_header": "Aparat",
   "choose_header": "Wybierz zdjęcie do analizy",
   "crop_header": "Przytnij zdjęcie do analizy",
@@ -35,5 +35,6 @@
   "intensity": "intensywność",
   "wavelength": "długość fali",
   "closest_match": "Najbliższe dopasowania",
-  "error": "błąd"
+  "error": "błąd",
+  "choose_const": "Wybierz stałą siatki:"
 }

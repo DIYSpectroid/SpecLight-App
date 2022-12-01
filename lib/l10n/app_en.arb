@@ -35,9 +35,9 @@
     "@credits": {
         "description": "Message on button leading to credits screen"
     },
-    "choose_language": "Language",
+    "choose_language": "Settings",
     "@choose_language": {
-        "description": "Message on language choosing screen appbar"
+        "description": "Message on setting choosing screen appbar"
     },
     "camera_header": "Camera",
     "@camera_header": {
@@ -143,8 +143,12 @@
     "@closest_match": {
         "description": "Header over cards with best fitted spectres"
     },
-    "error": "error",
+    "error": "score",
     "@error": {
         "description": "Error of fitting two spectres, shown on spectra card"
+    },
+    "choose_const": "Choose diffraction grating:",
+    "@choose_const": {
+        "description": "Tooltip above grating settings"
     }
 }
