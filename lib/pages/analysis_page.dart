@@ -12,10 +12,12 @@ import 'package:spectroid/image_analysis/alogrithm_factory.dart';
 import 'package:spectroid/image_analysis/analysis/spectrable.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
 
-import 'analysis_page_components.dart';
-import 'image_analysis/data_extraction/image_data.dart';
-import 'numerical_analysis/compare_peaks.dart';
-import 'numerical_analysis/find_peaks.dart';
+
+import '../analysis_page_components.dart';
+import '../image_analysis/data_extraction/image_data.dart';
+import '../numerical_analysis/compare_peaks.dart';
+import '../numerical_analysis/find_peaks.dart';
+
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'overview.dart';

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'new_ui_components.dart';
+import '../utility/openUrl.dart';
+import '../widgets/new_ui_components.dart';
 
 class ResorcesPage extends StatelessWidget {
   ResorcesPage({Key? key, required this.chooseID}) : super(key: key);
@@ -30,14 +31,7 @@ class ResorcesPage extends StatelessWidget {
             SizedBox(
               height: 36,
               child: TextButton(
-                onPressed: () async{
-                  Uri url = Uri.parse("http://hexa.fis.agh.edu.pl/speclight-app/");
-                  if(await canLaunchUrl(url)){
-                    await launchUrl(url, mode: launchMode);
-                  }else {
-                    throw 'Could not launch $url';
-                  }
-                },
+                onPressed: () {openUrl("http://hexa.fis.agh.edu.pl/speclight-app/");},
                 child: Text("http://hexa.fis.agh.edu.pl/speclight-app/",
                     style: TextStyle(
                         fontSize: 16, color: Theme.of(context).accentColor)),
@@ -53,14 +47,7 @@ class ResorcesPage extends StatelessWidget {
             SizedBox(
               height: 36,
               child: TextButton(
-                onPressed: () async{
-                  Uri url = Uri.parse("http://hexa.fis.agh.edu.pl/speclight-app/");
-                  if(await canLaunchUrl(url)){
-                    await launchUrl(url, mode: launchMode);
-                  }else {
-                    throw 'Could not launch $url';
-                  }
-                },
+                onPressed: () {openUrl("http://hexa.fis.agh.edu.pl/speclight-app/");},
                 child: Align(
                     child: Text("http://hexa.fis.agh.edu.pl/speclight-app/",
                         style: TextStyle(

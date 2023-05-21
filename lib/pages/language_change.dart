@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'image_analysis/alogrithm_factory.dart';
-import 'image_analysis/grating_settings.dart';
-import 'main.dart';
-import 'new_ui_components.dart';
+
+import '../image_analysis/alogrithm_factory.dart';
+import '../image_analysis/grating_settings.dart';
+import '../main.dart';
+import '../widgets/new_ui_components.dart';
 import 'package:provider/provider.dart';
 
 class AppLocale extends ChangeNotifier {
@@ -54,6 +55,11 @@ class _LanguageChangeState extends State<LanguageChange> {
     var language = Provider.of<AppLocale>(context);
     const double spacing = 12;
 
+    void changeLanguage(String locale){
+      language.changeLocale(Locale(locale));
+      _setLanguage(locale);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.choose_language,
@@ -68,8 +74,7 @@ class _LanguageChangeState extends State<LanguageChange> {
                 imagePath: "assets/united kingdom.png",
                 label: "English",
                 onPressed: () {
-                  language.changeLocale(Locale('en'));
-                  _setLanguage('en');
+                  changeLanguage('en');
                 },
                 imageSize: 35,
               ),
@@ -78,8 +83,7 @@ class _LanguageChangeState extends State<LanguageChange> {
                 imagePath: "assets/poland.png",
                 label: "Polski",
                 onPressed: () {
-                  language.changeLocale(Locale('pl'));
-                  _setLanguage('pl');
+                  changeLanguage('pl');
                 },
                 imageSize: 35,
               ),

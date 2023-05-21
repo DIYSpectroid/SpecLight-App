@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'new_ui_components.dart';
+import '../utility/openUrl.dart';
+import '../widgets/new_ui_components.dart';
 
 class OverviewPage extends StatelessWidget {
   OverviewPage({Key? key, required this.index, required this.prefs})
       : super(key: key);
   int index;
   SharedPreferences prefs;
-  LaunchMode launchMode = LaunchMode.externalApplication;
 
   Future<List<dynamic>> OpenDatabase() async {
     String jsonString = await rootBundle.loadString('assets/testspectra.json');
@@ -97,14 +97,7 @@ class OverviewPage extends StatelessWidget {
               ),
               floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
               floatingActionButton: OutlinedButton.icon(
-                onPressed: () async {
-                  Uri url = Uri.parse(snapshot.data![index]["wikipedia_page"]);
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: launchMode);
-                  } else {
-                    throw 'Could not launch $url';
-                  }
-                },
+                  onPressed: () {openUrl(snapshot.data![index]["wikipedia_page"]);},
                 icon: const Icon(Icons.add),
                 label: Text(AppLocalizations.of(context)!.wikipedia),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white)),

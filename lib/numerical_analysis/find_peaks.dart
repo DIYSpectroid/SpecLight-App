@@ -1,4 +1,4 @@
-import '../analysis_page.dart';
+import '../pages/analysis_page.dart';
 
 List<LinearData> FindPeaks(List<LinearData> data, double minProminence, double maxProminence, int minWidth, double relevanceFactor){
 
