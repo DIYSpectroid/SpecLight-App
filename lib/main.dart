@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final cameras = await availableCameras();
   CameraDescription firstCamera = cameras.first;
@@ -123,10 +125,10 @@ class _MainPage extends State<MainPage> {
             return IndexedStack(
                 index: value,
                 children: [
-                  CameraPage(camera: widget.camera, chooseID: widget.chooseID),
+                  CameraPage(camera: widget.camera, chooseID: widget.chooseID, prefs: widget.prefs),
                   LibraryPage(chooseID: widget.chooseID, prefs: widget.prefs),
                   ResorcesPage(chooseID: widget.chooseID),
-                  LanguageChange(chooseID: widget.chooseID)
+                  LanguageChange(chooseID: widget.chooseID, prefs: widget.prefs,)
                 ]
             );
           })

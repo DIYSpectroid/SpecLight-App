@@ -35,9 +35,9 @@
     "@credits": {
         "description": "Message on button leading to credits screen"
     },
-    "choose_language": "Language",
+    "choose_language": "Settings",
     "@choose_language": {
-        "description": "Message on language choosing screen appbar"
+        "description": "Message on setting choosing screen appbar"
     },
     "camera_header": "Camera",
     "@camera_header": {
@@ -57,7 +57,7 @@
     },
     "analyzed_spectrum": "Analyzed spectrum",
     "@analyzed_spectrum": {
-        "description": "Tooltip over photo which went through analysis"
+        "description": "Header over photo which went through analysis"
     },
     "credits_header": "Credits",
     "@credits_header": {
@@ -126,5 +126,29 @@
     "wikipedia": "LEARN MORE ON WIKIPEDIA",
     "@wikipedia": {
         "description": "Button taking us to lightsource wikipedia page"
+    },
+    "peak": "Peak",
+    "@peak": {
+        "description": "visible on tooltip which shows after clicking on a peak found by the app"
+    },
+    "intensity": "intensity",
+    "@intensity": {
+        "description": "visible on tooltips showing intensity"
+    },
+    "wavelength": "wavelength",
+    "@wavelength": {
+        "description": "visible on tooltips showing wavelength"
+    },
+    "closest_match": "Closest match",
+    "@closest_match": {
+        "description": "Header over cards with best fitted spectres"
+    },
+    "error": "score",
+    "@error": {
+        "description": "Error of fitting two spectres, shown on spectra card"
+    },
+    "choose_const": "Choose diffraction grating:",
+    "@choose_const": {
+        "description": "Tooltip above grating settings"
     }
 }

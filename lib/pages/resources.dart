@@ -7,6 +7,7 @@ import '../widgets/new_ui_components.dart';
 class ResorcesPage extends StatelessWidget {
   ResorcesPage({Key? key, required this.chooseID}) : super(key: key);
   ValueNotifier<int> chooseID;
+  LaunchMode launchMode = LaunchMode.externalApplication;
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +41,8 @@ class ResorcesPage extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(bottom: 14.0)),
-            Text(AppLocalizations.of(context)!.youtube,
+            //Padding(padding: EdgeInsets.only(bottom: 14.0)),
+            /*Text(AppLocalizations.of(context)!.youtube,
                 style: Theme.of(context).textTheme.bodyText1),
             SizedBox(
               height: 36,
@@ -59,7 +60,7 @@ class ResorcesPage extends StatelessWidget {
               ),
             ),
 
-            Padding(padding: EdgeInsets.all(10)),
+            Padding(padding: EdgeInsets.all(10)),*/
 
             Text(AppLocalizations.of(context)!.authors, style: Theme.of(context).textTheme.bodyText1),
             Padding(padding: EdgeInsets.all(2)),
@@ -76,13 +77,13 @@ class ResorcesPage extends StatelessWidget {
             Text("mgr Roman Kokoszka", style: Theme.of(context).textTheme.bodyText2),
             Padding(padding: EdgeInsets.all(2 * 2)),
 
-            Text(AppLocalizations.of(context)!.special_thanks, style: Theme.of(context).textTheme.bodyText1),
-            Padding(padding: EdgeInsets.all(2)),
+            //Text(AppLocalizations.of(context)!.special_thanks, style: Theme.of(context).textTheme.bodyText1),
+            //Padding(padding: EdgeInsets.all(2)),
 
-            Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
-            Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
-            Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
-            Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
+            //Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
+            //Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
+            //Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
+            //Text("XYZ", style: Theme.of(context).textTheme.bodyText2),
 
             Expanded(
               child: Container(
@@ -107,28 +108,42 @@ class ResorcesPage extends StatelessWidget {
                       imageSize: 35,
                       label: "Facebook",
                       color: Color(0xFFbb8000),
-                      onPressed: (){},
+                      onPressed: () async{
+                        Uri url = Uri.parse("https://www.facebook.com/profile.php?id=100076116576037");
+                        if(await canLaunchUrl(url)){
+                          await launchUrl(url, mode: launchMode);
+                        }else {
+                          throw 'Could not launch $url';
+                        }
+                      },
                     ),
                     ImageButton(
                       imagePath: "assets/instagramOrange.png",
                       imageSize: 35,
                       label: "Instagram",
-                      color: Color(0xFFbb8000),
-                        onPressed: () {openUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ");},
+                      color: Colors.black26,
+                      onPressed: null,
                     ),
                     ImageButton(
                       imagePath: "assets/linkedinOrange.png",
                       imageSize: 35,
                       label: "Linkedin",
                       color: Color(0xFFbb8000),
-                      onPressed: (){},
+                      onPressed: () async{
+                        Uri url = Uri.parse("https://www.linkedin.com/company/skn-hexa/");
+                        if(await canLaunchUrl(url)){
+                          await launchUrl(url, mode: launchMode);
+                        }else {
+                          throw 'Could not launch $url';
+                        }
+                      },
                     ),
                     ImageButton(
                       imagePath: "assets/twitterOrange.png",
                       imageSize: 35,
                       label: "Twitter",
-                      color: Color(0xFFbb8000),
-                      onPressed: (){},
+                      color: Colors.black26,
+                      onPressed: null,
                     ),
               ],
             ),

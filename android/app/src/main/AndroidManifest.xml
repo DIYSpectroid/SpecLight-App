@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="agh.hexa.spectroid.spectroid">
    <application
-        android:label="spectroid"
+        android:label="Speclight App"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:exported="true"

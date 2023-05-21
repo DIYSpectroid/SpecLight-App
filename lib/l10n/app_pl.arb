@@ -8,7 +8,7 @@
   "settings": "Ustawienia",
   "website": "Strona",
   "credits": "Twórcy",
-  "choose_language": "Język",
+  "choose_language": "Ustawienia",
   "camera_header": "Aparat",
   "choose_header": "Wybierz zdjęcie do analizy",
   "crop_header": "Przytnij zdjęcie do analizy",
@@ -30,5 +30,11 @@
   "spectrapeaks": "Piki w spektrum:",
   "spectradescpart1": "nm z intensywnościa ",
   "spectradescpart2": "%",
-  "wikipedia": "PRZECZYTAJ WIĘCEJ NA WIKIPEDII"
+  "wikipedia": "PRZECZYTAJ WIĘCEJ NA WIKIPEDII",
+  "peak": "Pik",
+  "intensity": "intensywność",
+  "wavelength": "długość fali",
+  "closest_match": "Najbliższe dopasowania",
+  "error": "błąd",
+  "choose_const": "Wybierz stałą siatki:"
 }
