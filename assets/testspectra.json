@@ -1,0 +1,33 @@
+[   
+    {    
+        "name_pl" : "Sód",
+        "name_en" : "Sodium",
+        "name_de" : "Natrium",
+        "name_fr" : "Sodium",
+        "name_ua" : "Натрій",
+        "name_cn" : "钠",
+        "class" : 0,
+        "wikipedia_page" : "https://en.wikipedia.org/wiki/Sodium",
+        "example_photo" : "assets/sodiumLines.png",
+        "peaks" : [
+            {"wavelength" : 420, "intensity": 69.9},
+            {"wavelength" : 444, "intensity": 100},
+            {"wavelength" : 322, "intensity": 21.37}
+        ]
+    },
+    {    
+        "name_pl" : "Chlor",
+        "name_en" : "Chlorine",
+        "name_de" : "Chlor",
+        "name_fr" : "Chlore",
+        "name_ua" : "Хлор",
+        "name_cn" : "氯",
+        "class" : 0,
+        "wikipedia_page" : "https://en.wikipedia.org/wiki/Chlorine",
+        "example_photo" : "assets/chlorineLines.png",
+        "peaks" : [
+            {"wavelength" : 700, "intensity": 20},
+            {"wavelength" : 500, "intensity": 100}
+        ]
+    }
+]

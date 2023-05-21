@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'analysis_page.dart';
-import 'image_analysis/alogrithm_factory.dart';
+import '../image_analysis/alogrithm_factory.dart';
 
 final ImagePicker picker = ImagePicker();
 
@@ -25,13 +25,14 @@ class CropPhotoPage extends StatefulWidget{
 
 
 class _CropPhotoPageState extends State<CropPhotoPage> {
-  File? croppedFile;
+
+  CroppedFile? croppedFile;
   Algorithm algorithm = Algorithm.hsvPositionPolynomial;
   Grating grating = Grating.grating1000;
-  late final Future<File>? temp = cropImage();
+  late final Future<CroppedFile>? temp = cropImage();
 
-  Future<File> cropImage() async {
-      croppedFile = await ImageCropper.cropImage(
+  Future<CroppedFile> cropImage() async {
+      croppedFile = await ImageCropper.platform.cropImage(
         sourcePath: widget.imageFile!.path,
         aspectRatioPresets: [
           //CropAspectRatioPreset.square,
@@ -40,15 +41,15 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
           // CropAspectRatioPreset.ratio4x3,
           // CropAspectRatioPreset.ratio16x9
         ],
-        androidUiSettings: AndroidUiSettings(
-            toolbarTitle: AppLocalizations.of(context)!.crop_header,
-            toolbarColor: Colors.grey,
-            toolbarWidgetColor: Colors.black,
-            activeControlsWidgetColor: Colors.grey,
-            cropFrameColor: Colors.white,
-            cropGridColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: AppLocalizations.of(context)!.crop_header,
+              toolbarColor: Theme.of(context).primaryColor,
+              statusBarColor: Theme.of(context).primaryColor,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+        ],
     );
       return croppedFile!;
   }
@@ -58,13 +59,15 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
 
     return Scaffold(
       appBar: AppBar(
-
-        title: Text(AppLocalizations.of(context)!.crop_header),
+        leading: const BackButton(
+          color: Colors.white,
+        ),
+        title: Text(AppLocalizations.of(context)!.crop_header, style: TextStyle(color: Colors.white),),
       ),
       body: Center(
-      child: FutureBuilder<File?>(
+      child: FutureBuilder<CroppedFile?>(
       future: temp,
-      builder: (BuildContext context, AsyncSnapshot<File?> snapshot){
+      builder: (BuildContext context, AsyncSnapshot<CroppedFile?> snapshot){
         if(snapshot.hasData){
           return  Column(
               children:

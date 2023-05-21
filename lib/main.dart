@@ -1,17 +1,24 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/image_analysis/data_extraction/light_hue_conversion_extractor.dart';
-import 'choose_image.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:spectroid/pages/library.dart';
+import 'package:spectroid/pages/resources.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'language_change.dart';
-import 'minor_pages/credits.dart';
-import 'new_ui_components.dart';
+import 'pages/camera.dart';
+import 'pages/language_change.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final cameras = await availableCameras();
+  CameraDescription firstCamera = cameras.first;
+  runApp(MyApp(camera: firstCamera, prefs: prefs));
   HueConversionData.initialize(false);
   HueConversionData.initialize(true);
 }
@@ -37,8 +44,10 @@ MaterialColor buildMaterialColor(Color color) {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key, required this.camera, required this.prefs}) : super(key: key);
 
+  final CameraDescription camera;
+  SharedPreferences prefs;
 
 
   // This widget is the root of your application.
@@ -62,9 +71,14 @@ class MyApp extends StatelessWidget {
               locale: locale.locale, // NEW
               title: 'Flutter Demo',
               theme: ThemeData(
-                primarySwatch: buildMaterialColor(Color(0xFFD2D0E7)),
+                primarySwatch: buildMaterialColor(Color(0xFFFA7921)),
+                accentColor: buildMaterialColor(Color(0xFFF2AF29)),
+                textTheme: TextTheme(
+                  bodyText1: TextStyle(color: Colors.black, fontSize: 16),
+                  headline6: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               ),
-              home: MyHomePage(title: 'SPECLIGHT App'),
+              home: MainPage(camera: camera, chooseID: ValueNotifier<int>(0), prefs: prefs),
             );
           }
       ),
@@ -72,130 +86,53 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class MainPage extends StatefulWidget {
+  MainPage({Key? key, required this.camera, required this.chooseID, required this.prefs}) : super(key: key);
+  final CameraDescription camera;
+  SharedPreferences prefs;
+  ValueNotifier<int> chooseID ;
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainPage> createState() => _MainPage();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MainPage extends State<MainPage> {
+    void _loadLanguage() async {
+      var language = Provider.of<AppLocale>(context, listen: false);
+      setState(() {
+        if(widget.prefs.containsKey('language')) {
+          language.changeLocale(Locale(widget.prefs.getString('language')!));
+        }
+        else
+        {
+          widget.prefs.setString('language', language.locale.toString());
+        }
+      });
+    }
 
+    void initState() {
+      super.initState();
+      _loadLanguage();
+    }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadLanguage();
-  }
-
-
-
-  void _loadLanguage() async {
-
-    final prefs = await SharedPreferences.getInstance();
-    var language = Provider.of<AppLocale>(context, listen: false);
-    setState(() {
-      if(prefs.containsKey('language')) {
-        language.changeLocale(Locale(prefs.getString('language')!));
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-
-    const double spacing = 12;
-
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title, style: TextStyle(fontFamily: 'Proxy', fontSize: 28)),
-      ),
-      body: Center(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(40, spacing * 4, 40, 0),
-          children: <Widget>[
-            MenuButton(
-              icon: Icons.camera_alt,
-              label: AppLocalizations.of(context)!.take_analysis,
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: true),));
-              },
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.folder_outlined,
-              label: AppLocalizations.of(context)!.send_analysis,
-              onPressed: (){
-                Navigator.push((context),
-                    MaterialPageRoute(builder:
-                        (context) => const ChoosePhotoPage(isCameraChosen: false),));
-                },
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.ondemand_video_outlined,
-              label: AppLocalizations.of(context)!.instruction,
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.help_outline,
-              label: AppLocalizations.of(context)!.help,
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            MenuButton(
-              icon: Icons.insert_photo_outlined,
-              label: AppLocalizations.of(context)!.examples,
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing * 4)),
-            MenuButton(
-              icon: Icons.share_outlined,
-              label: AppLocalizations.of(context)!.share,
-              color: Color(0x1AE75EA0),
-              onPressed: (){},
-            ),
-            Padding(padding: EdgeInsets.all(spacing)),
-            SizedBox(
-              child: Row(
-                children:[
-                  SquareButton(icon: Icons.settings_outlined, label: AppLocalizations.of(context)!.settings, onPressed: (){
-                    Navigator.push((context),
-                        MaterialPageRoute(builder:
-                            (context) => LanguageChange()));
-                  }),
-                  Expanded(child: Container()),
-                  SquareButton(icon: Icons.language_outlined, label: AppLocalizations.of(context)!.website),
-                  Expanded(child: Container()),
-                  SquareButton(icon: Icons.person_outline, label: AppLocalizations.of(context)!.credits,
-                    onPressed: (){
-                    Navigator.push((context),
-                        MaterialPageRoute(builder:
-                            (context) => CreditsPage(),));
-                  },)
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        body: ValueListenableBuilder<int>(
+          valueListenable: widget.chooseID,
+          builder: (context, value, _) {
+            return IndexedStack(
+                index: value,
+                children: [
+                  CameraPage(camera: widget.camera, chooseID: widget.chooseID),
+                  LibraryPage(chooseID: widget.chooseID, prefs: widget.prefs),
+                  ResorcesPage(chooseID: widget.chooseID),
+                  LanguageChange(chooseID: widget.chooseID)
                 ]
-              )
-            )
+            );
+          })
+      );
+    }
 
-          ]
-        )
-      ),
-    );
-  }
 }
+
+
