@@ -46,7 +46,6 @@ dependencies:
   url_launcher: 6.1.5
   syncfusion_flutter_charts: 20.2.43
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
