@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../analysis_page.dart';
+import '../pages/analysis_page.dart';
 
 class CompareResult{
     late int result;
