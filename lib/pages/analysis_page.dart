@@ -2,11 +2,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/image_analysis/alogrithm_factory.dart';
 import 'package:spectroid/image_analysis/analysis/spectrable.dart';
@@ -38,9 +40,21 @@ class AnalysisPage extends StatefulWidget{
 
 }
 
+class ProgressProvider extends ChangeNotifier {
+  String _processingState = "";
+
+  String get processingState => _processingState;
+
+  set processingState (String newState) {
+    _processingState = newState;
+    notifyListeners();
+  }
+}
+
 class _AnalysisPageState extends State<AnalysisPage> {
   Future<ImageData>? imageData;
   File? imageFile;
+  ProgressProvider provider = ProgressProvider();
 
 
   Future<ImageData> analyzeImage() async {
@@ -58,21 +72,19 @@ class _AnalysisPageState extends State<AnalysisPage> {
   }
 
   Future<Spectrable?> getSpectrum() async{
+    provider.processingState = "Extracting image data";
     ImageData imageData = await compute(ImageDataExtraction.getImageData, widget.imageFilePath!);
     await imageData.extractData();
-
-    print(imageData.width);
-
+    provider.processingState = "Analyzing spectrum";
     Spectrable? spectrumGenerator = AlgorithmFactory()
         .setAlgorithm(widget.algorithm)
         .setGrating(widget.grating)
         .setImageData(imageData)
         .create();
-
     if(spectrumGenerator == null) {
       throw new Exception("Something went wrong");
     }
-    spectrumGenerator.generateSpectrum();
+    await spectrumGenerator.generateSpectrum();
     return spectrumGenerator;
   }
 
@@ -105,7 +117,8 @@ class _AnalysisPageState extends State<AnalysisPage> {
     );
 
     List<String> categories = <String>[AppLocalizations.of(context)!.category0, AppLocalizations.of(context)!.category1];
-    return Scaffold(
+    return ChangeNotifierProvider(create: (context) => provider,
+      child: Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.analysis_header, style: TextStyle(color: Colors.white),),
         leading: const BackButton(
@@ -140,7 +153,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                       trackballBehavior: _trackballBehavior,
                       tooltipBehavior: _tooltipBehavior,
                         palette: <Color>[
-                          Theme.of(context).accentColor,
+                          Theme.of(context).hintColor,
                           Theme.of(context).primaryColor
                         ],
                         primaryYAxis: NumericAxis(
@@ -211,7 +224,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                                   margin: EdgeInsets.fromLTRB(50, 0, 50, 20),
                                   child: InkWell(
                                     splashColor:
-                                    Theme.of(context).accentColor.withAlpha(30),
+                                    Theme.of(context).hintColor.withAlpha(30),
                                     //ADD ON PRESS
                                     onTap: () {
                                       Navigator.push(
@@ -276,12 +289,23 @@ class _AnalysisPageState extends State<AnalysisPage> {
               }
 
                else{
-                return const CircularProgressIndicator();
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Lottie.asset('assets/HexagonRotating.json', width: 150, height: 150),
+                      Container(height: 30),
+                      Consumer<ProgressProvider>(builder: (context, user, _) => Text(user.processingState, style: TextStyle(color: Colors.black, fontSize: 20)))
+                    ]
+                  )
+                );
               }
             }
         ),
         ),
-      );
+      )
+    );
   }
 }
 

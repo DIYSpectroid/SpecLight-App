@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:spectroid/image_analysis/analysis/position_spectrable_hsv.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data.dart';
 
@@ -16,11 +17,11 @@ class HSVPositionPolynomialSureBounds extends PolynomialPositionSpectrableHSV  {
       ImageData imageData)
       : super(relativePosToWavelengthFunctionCoefficients, inverseRelativePosToWavelengthFunctionCoefficients, imageData);
 
-  void generateSpectrum(){
-    SpectrumPositionBounds spectrumBounds = getSpectrumBounds();
+  Future<void> generateSpectrum() async{
+    SpectrumPositionBounds spectrumBounds = await compute(getSpectrumBounds, 0);
     print("${spectrumBounds.firstLightX}, ${spectrumBounds.lastLightX}, ${spectrumBounds.firstLightWavelength}, ${spectrumBounds.lastLightWavelength}");
 
-    SpectrumPositionBounds spectrumBoundsForPolynomial = getBoundsForPolynomial(spectrumBounds);
+    SpectrumPositionBounds spectrumBoundsForPolynomial = await compute(getBoundsForPolynomial, spectrumBounds);
     print("${spectrumBoundsForPolynomial.firstLightX}, ${spectrumBoundsForPolynomial.lastLightX}, ${spectrumBoundsForPolynomial.firstLightWavelength}, ${spectrumBoundsForPolynomial.lastLightWavelength}");
     int currentPositionX = 0;
     for(HSVPixel pixel in imageData.hsvPixels){
@@ -31,11 +32,11 @@ class HSVPositionPolynomialSureBounds extends PolynomialPositionSpectrableHSV  {
       currentPositionX++;
       currentPositionX = currentPositionX % imageData.width;
     }
-    normalizeAndSampleSpectrumValues();
+    normalizeAndSampleSpectrumValues(0);
   }
 
   @override
-  SpectrumPositionBounds getSpectrumBounds() {
+  Future<SpectrumPositionBounds> getSpectrumBounds(int _) async{
 
     int pixelBounds = PixelsOnEachSide;
 

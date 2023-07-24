@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'analysis_page.dart';
@@ -130,8 +131,9 @@ class _CropPhotoPageState extends State<CropPhotoPage> {
           return const Text("Something went wrong");
         }
         else {
-          return const CircularProgressIndicator();
-        }
+          return Lottie.asset('assets/HexagonRotating.json', width: 150, height: 150);
+
+      }
         // if(snapshot.hasData){
         //   //return Image.file(File(snapshot.data!.path));
         //   Navigator.push((context),

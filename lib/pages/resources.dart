@@ -34,7 +34,7 @@ class ResorcesPage extends StatelessWidget {
                 onPressed: () {openUrl("http://hexa.fis.agh.edu.pl/speclight-app/");},
                 child: Text("http://hexa.fis.agh.edu.pl/speclight-app/",
                     style: TextStyle(
-                        fontSize: 16, color: Theme.of(context).accentColor)),
+                        fontSize: 16, color: Theme.of(context).hintColor)),
                 style: ButtonStyle(
                   padding:
                       MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(0)),

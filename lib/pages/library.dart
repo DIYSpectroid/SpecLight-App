@@ -48,7 +48,7 @@ class LibraryPage extends StatelessWidget {
                     return Card(
                       child: InkWell(
                         splashColor:
-                            Theme.of(context).accentColor.withAlpha(30),
+                            Theme.of(context).hintColor.withAlpha(30),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -91,7 +91,7 @@ class LibraryPage extends StatelessWidget {
             } else {
               return Center(
                   child: CircularProgressIndicator(
-                      color: Theme.of(context).accentColor));
+                      color: Theme.of(context).hintColor));
             }
           }),
       bottomNavigationBar: BottomAppBar(

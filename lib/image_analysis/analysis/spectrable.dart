@@ -18,7 +18,7 @@ class Spectrable {
   int highMinValue = 80;
 
   Spectrable(this.imageData){}
-  void generateSpectrum() {}
+  Future<void> generateSpectrum() async {}
 
   bool isPixelXYZRatioUnique(double wavelength){
     int uniquenessStart = 410;
@@ -26,7 +26,7 @@ class Spectrable {
     return wavelength >= uniquenessStart && wavelength <= uniquenessEnd;
   }
 
-  void normalizeAndSampleSpectrumValues(){
+  Future<void> normalizeAndSampleSpectrumValues(int _) async{
     Map<double, double> newSpectrum = {};
     for(double i = wavelengthMin; i <= wavelengthMax; i += 1) {
       newSpectrum[i] = 0;

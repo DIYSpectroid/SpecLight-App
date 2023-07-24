@@ -7,7 +7,7 @@ class PositionSpectrableHSV extends SpectrableHSV {
 
   PositionSpectrableHSV(ImageData imageData) : super(imageData) {}
 
-  SpectrumPositionBounds getSpectrumBounds() {
+  Future<SpectrumPositionBounds> getSpectrumBounds(int _) async {
     int currentPositionX = 0;
     int firstLightPositionX = imageData.width;
     int lastLightPositionX = 0;

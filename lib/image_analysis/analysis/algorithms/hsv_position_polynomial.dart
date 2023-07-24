@@ -10,8 +10,8 @@ class HSVPositionPolynomial extends PolynomialPositionSpectrableHSV  {
       ImageData imageData)
       : super(relativePosToWavelengthFunctionCoefficients, inverseRelativePosToWavelengthFunctionCoefficients, imageData);
 
-  void generateSpectrum(){
-    SpectrumPositionBounds spectrumBounds = getSpectrumBounds();
+  Future<void> generateSpectrum() async{
+    SpectrumPositionBounds spectrumBounds = await getSpectrumBounds(0);
     print("${spectrumBounds.firstLightX}, ${spectrumBounds.lastLightX}, ${spectrumBounds.firstLightWavelength}, ${spectrumBounds.lastLightWavelength}");
 
     SpectrumPositionBounds spectrumBoundsForPolynomial = getBoundsForPolynomial(spectrumBounds);
@@ -25,7 +25,7 @@ class HSVPositionPolynomial extends PolynomialPositionSpectrableHSV  {
       currentPositionX++;
       currentPositionX = currentPositionX % imageData.width;
     }
-    normalizeAndSampleSpectrumValues();
+    normalizeAndSampleSpectrumValues(0);
   }
 
 

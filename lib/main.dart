@@ -73,8 +73,12 @@ class MyApp extends StatelessWidget {
               locale: locale.locale, // NEW
               title: 'Flutter Demo',
               theme: ThemeData(
+                useMaterial3: false,
                 primarySwatch: buildMaterialColor(Color(0xFFFA7921)),
-                accentColor: buildMaterialColor(Color(0xFFF2AF29)),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  backgroundColor: buildMaterialColor(Color(0xFFF2AF29)),
+                ),
+                hintColor: buildMaterialColor(Color(0xFFF2AF29)),
                 textTheme: TextTheme(
                   bodyText1: TextStyle(color: Colors.black, fontSize: 16),
                   headline6: TextStyle(color: Colors.white, fontSize: 20),
