@@ -15,7 +15,7 @@ class OverviewPage extends StatelessWidget {
   SharedPreferences prefs;
 
   Future<List<dynamic>> OpenDatabase() async {
-    String jsonString = await rootBundle.loadString('assets/testspectra.json');
+    String jsonString = await rootBundle.loadString('assets/spectra.json');
     List<dynamic> json = jsonDecode(jsonString);
     return json;
   }
@@ -85,7 +85,7 @@ class OverviewPage extends StatelessWidget {
                               return Container(
                                   padding: EdgeInsets.fromLTRB(0, 3.0, 0, 3.0),
                                   child: Text(
-                                    ("${snapshot.data![index]["peaks"][number]["wavelength"]}" + AppLocalizations.of(context)!.spectradescpart1 + "${snapshot.data![index]["peaks"][number]["intensity"]}" + AppLocalizations.of(context)!.spectradescpart2),
+                                    ("${snapshot.data![index]["peaks"][number]["wavelength"]}" + AppLocalizations.of(context)!.spectradescpart1 + double.parse("${snapshot.data![index]["peaks"][number]["intensity"]}").toStringAsFixed(2) + AppLocalizations.of(context)!.spectradescpart2),
                                   style: TextStyle(color: Colors.black54, fontSize: 16)
                                     ,));
                             }),

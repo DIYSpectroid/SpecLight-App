@@ -14,7 +14,7 @@ class LibraryPage extends StatelessWidget {
   SharedPreferences prefs;
 
   Future<List<dynamic>> OpenDatabase() async {
-    String jsonString = await rootBundle.loadString('assets/testspectra.json');
+    String jsonString = await rootBundle.loadString('assets/spectra.json');
     List<dynamic> json = jsonDecode(jsonString);
     return json;
   }

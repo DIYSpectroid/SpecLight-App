@@ -26,7 +26,7 @@ class CompareResult{
 
 Future<List<CompareResult>> ComputePeaks(Map map) async{
     await WidgetsFlutterBinding.ensureInitialized();
-    String jsonString = await rootBundle.loadString('assets/testspectra.json');
+    String jsonString = await rootBundle.loadString('assets/spectra.json');
     map["json"] = jsonString;
     List<CompareResult> results = await compute(ComparePeaks, map);
     return results;
