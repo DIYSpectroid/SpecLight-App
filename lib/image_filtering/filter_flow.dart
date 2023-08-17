@@ -9,12 +9,12 @@ int gaussRadius = 3;
 
 Future<ImageData> filterFlow(String imageFilePath) async {
   List<int> values = await File(imageFilePath).readAsBytes();
-  img.Image inputImage = img.decodeImage(Uint8List.fromList(values))!;
-  img.Image gaussBlur = img.gaussianBlur(inputImage, radius: gaussRadius);
+  img.Image inputImage = img.decodeImage(values)!;
+  img.Image gaussBlur = img.gaussianBlur(inputImage, gaussRadius);
   final png = img.encodePng(gaussBlur);
   final Directory directory = await getTemporaryDirectory();
   String path = directory.path + '/filtered.png';
   await File(path).writeAsBytes(png);
   return ImageData(
-      path, gaussBlur.getBytes(), gaussBlur.height, gaussBlur.width);
+      path, gaussBlur.data, gaussBlur.height, gaussBlur.width);
 }
