@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 import 'dart:io';
 
@@ -20,8 +21,8 @@ class ImageDataExtraction{
 
   static Future<ImageData> getImageData(String imageFilePath) async{
     List<int> values = await File(imageFilePath).readAsBytes();
-    img.Image image = img.decodeImage(values)!;
-    return new ImageData(imageFilePath, image.data, image.height, image.width);
+    img.Image image = img.decodeImage(Uint8List.fromList(values))!;
+    return new ImageData(imageFilePath, image.getBytes(), image.height, image.width);
   }
 
   static Future<List<HSVPixel>> convertBytesToHSV(List<int> bytes) async{

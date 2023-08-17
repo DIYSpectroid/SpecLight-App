@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spectroid/image_analysis/alogrithm_factory.dart';
 import 'package:spectroid/image_analysis/analysis/spectrable.dart';
 import 'package:spectroid/image_analysis/data_extraction/image_data_extraction.dart';
+import 'package:spectroid/image_filtering/filter_flow.dart';
 
 
 import '../analysis_page_components.dart';
@@ -25,6 +26,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'overview.dart';
 
 final ImagePicker picker = ImagePicker();
+
+bool filtering = false;
 
 class AnalysisPage extends StatefulWidget{
 
@@ -73,7 +76,15 @@ class _AnalysisPageState extends State<AnalysisPage> {
 
   Future<Spectrable?> getSpectrum() async{
     provider.processingState = "Extracting image data";
-    ImageData imageData = await compute(ImageDataExtraction.getImageData, widget.imageFilePath!);
+    ImageData imageData;
+    if(filtering)
+    {
+      imageData = await filterFlow((widget.imageFilePath!));
+    }
+    else
+    {
+      imageData = await compute(ImageDataExtraction.getImageData, widget.imageFilePath!);
+    }
     await imageData.extractData();
     provider.processingState = "Analyzing spectrum";
     Spectrable? spectrumGenerator = AlgorithmFactory()
@@ -205,7 +216,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Container(child: Divider(color: Colors.black54), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
                     Text(AppLocalizations.of(context)!.analyzed_spectrum, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
-                    Container(child: Image.file(File(widget.imageFilePath!)),),
+                    Container(child: Image.file(File(snapshot.data!.imageData.filepath)),),
                     Container(child: Divider(color: Colors.black54), padding: EdgeInsets.fromLTRB(30, 5, 30, 5)),
                     Text(AppLocalizations.of(context)!.closest_match, textAlign: TextAlign.center, style: TextStyle(fontSize: 18),),
                     Padding(padding: EdgeInsets.all(4.0)),
