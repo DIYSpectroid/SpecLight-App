@@ -3,6 +3,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
@@ -15,6 +16,16 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        google()
+        jcenter()
+        maven {
+            // All of the Detox artifacts are provided via the npm module
+            url("$rootDir/../../../node_modules/detox/Detox-android")
+        }
     }
 }
 

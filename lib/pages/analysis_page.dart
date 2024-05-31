@@ -209,7 +209,13 @@ class _AnalysisPageState extends State<AnalysisPage> {
                     Row(
                       children: [
                         Padding(padding: EdgeInsets.only(right: 36)),
-                        Expanded(child: Image.asset("assets/spectrumGen.jpg")),
+                        Expanded(
+                            child: Image(
+                                image: AssetImage("assets/Spectrum_iod.png"),
+                                fit: BoxFit.fill,
+                                height: 35,
+                            )
+                        ),
                         Padding(padding: EdgeInsets.only(left: 30)),
                       ],
                     ),
@@ -281,7 +287,7 @@ class _AnalysisPageState extends State<AnalysisPage> {
                                       ],
                                     ),
                                   ),
-                                );;
+                                );
                               });
                         }
                         else if(snapshot.hasError){

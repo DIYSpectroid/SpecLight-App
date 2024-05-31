@@ -122,7 +122,14 @@ class ResorcesPage extends StatelessWidget {
                       imageSize: 35,
                       label: "Instagram",
                       color: Colors.black26,
-                      onPressed: null,
+                      onPressed: () async{
+                        Uri url = Uri.parse("https://www.instagram.com/skn_hexa?igsh=MWZjYWhlM2ZsaTVqaw==");
+                        if(await canLaunchUrl(url)){
+                          await launchUrl(url, mode: launchMode);
+                        }else {
+                          throw 'Could not launch $url';
+                        }
+                      },
                     ),
                     ImageButton(
                       imagePath: "assets/linkedinOrange.png",
