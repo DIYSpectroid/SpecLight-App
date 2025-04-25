@@ -1,7 +1,7 @@
 # SpecLight-App
 
 ## Introduction
-This mobile application is built using *Flutter*, and it is meant as an augmentation tool to handmade spectroscopes. It is capable of processing data from  and helps with identifying the light source. Project is also supplemented with custom template for making your own papercraft spectroscope!
+This mobile application is built using *Flutter*, and it is meant as an augmentation tool to handmade spectroscopes. It is capable of processing data from collected spectra image and helps with identifying the light source. Project is also supplemented with custom template for making your own papercraft spectroscope!
 
 ## Goals of project
 Our goal is to promote the understanding of optical spectroscopy, a fundamental area of physics, by creating an affordable and easy-to-use paper spectroscope for students. Our solution will allow users to observe beautiful spectra of various elements, similar to those found in physics textbooks. Additionally, we aim to enhance the learning experience by developing a mobile application that can analyze the obtained spectra, making scientific exploration more accessible and engaging for students and educators alike.
